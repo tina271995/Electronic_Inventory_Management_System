@@ -1,5 +1,5 @@
 <head>
-    <link rel ="stylesheet" href ="login.css">
+    <link rel ="stylesheet" href="{{ url_for('static', path='/login.css') }}">
 </head>
 <div class="form-modal">
 
@@ -22,7 +22,7 @@
             <button type="button" class="btn login">login</button>
 
             <!-- <p><a href="javascript:void(0)">Forgotten account</a></p> -->
-            <hr/>
+         
 
         </form>
     </div>
@@ -48,7 +48,7 @@
         </div>
         <button type="button" class="btn signup">create account</button>
         <!-- <p>Clicking <strong>create account</strong> means that you are agree to our <a href="javascript:void(0)">terms of services</a>.</p> -->
-        <hr/>  
+      
         </form>
     </div>
 
