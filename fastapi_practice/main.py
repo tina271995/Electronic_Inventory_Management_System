@@ -6,6 +6,8 @@ from fastapi import FastAPI,Request,Depends, HTTPException
 from sqlalchemy import *
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import SQLAlchemyError
+from database import engine, Base, SessionLocal
+from fastapi import FastAPI,Request, Form
 
 from database import *
 app = FastAPI()
@@ -17,9 +19,9 @@ templates = Jinja2Templates(directory="templates")
 async def read_root(request: Request):
     return  templates.TemplateResponse(request=request, name="login.html")
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
+# @app.get("/items/{item_id}")
+# async def read_item(item_id: int):
+#     return {"item_id": item_id}
 
 # @app.get("/items/{id}", response_class=HTMLResponse)
 # async def read_item(request: Request, id: str):
@@ -42,7 +44,7 @@ def healthcheck():
 @app.get("/db-check")
 def db_check():
     try:
-        db = Sessionlocal()
+        db = SessionLocal()
         db.execute(text("SELECT 1"))
         db.close()
         return {"status": "✅ Connected to MySQL database"}
@@ -55,3 +57,26 @@ def root():
 
 Base.metadata.create_all(bind=engine)
 print("✅ Tables created with FastAPI app startup")
+
+
+
+
+@app.get("/register", response_class=HTMLResponse)
+async def register_form(request: Request):
+    print("Rakeshhhhhhhhhhhhhhhhhh")
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/registerName", response_class=HTMLResponse)
+async def register(
+    request: Request, 
+    email: str=Form(...), 
+    username: str = Form(...), 
+    password : str =Form(...), 
+    confirm_password : str =Form(...), 
+    role: str =Form(...)
+):
+    print("Rakeshhssshshshsshshhs")
+    
+    print(f"Email: {email}, Username: {username}, Password: {password}, Role: {role}")
+    
+    return templates.TemplateResponse(request= request, name="login.html")

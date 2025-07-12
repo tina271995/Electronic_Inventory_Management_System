@@ -9,7 +9,7 @@
     </div>
 
     <div id="login-form">
-        <form>
+        <form action="/login" method="POST">
             <input type="text" placeholder="Enter email or username"/>
             <input type="password" placeholder="Enter password"/>
             <!-- <div class="role-selection">
@@ -28,28 +28,24 @@
     </div>
 
     <div id="signup-form">
-        <form>
-            <input type="email" placeholder="Enter your email"/>
-            <input type="text" placeholder="Choose username"/>
-            <input type="password" placeholder="Create password"/>
-            <input type="password" placeholder="Confirm password"/>
+       <form action="http://127.0.0.1:8000/registerName" method="post">
+    <input type="email" name="email" placeholder="Enter your email"/>
+    <input type="text" name="username" placeholder="Choose username"/> 
+    <input type="password" name="password" placeholder="Create password"/>
+    <input type="password" name="confirm_password" placeholder="Confirm password"/>
 
-            <!-- <input type="role-dropdown" placeholder="select role"/> -->
-
-           <!-- Radio buttons for role selection -->
-        <div class="role-selection">
-            <span class="radio-label">Select Role:</span>
-                <div class="radio-group">
-                    <label class="radio-button">
-                        <input type="radio" name="role" value="admin" checked>Admin</label>
-                    <label class="radio-button">
-                        <input type="radio" name="role" value="staff">Staff</label>
-                </div>
+    <div class="role-selection">
+        <span class="radio-label">Select Role:</span>
+        <div class="radio-group">
+            <label class="radio-button">
+                <input type="radio" name="role" value="admin" checked>Admin</label>
+            <label class="radio-button">
+                <input type="radio" name="role" value="staff">Staff</label>
         </div>
-        <button type="button" class="btn signup">create account</button>
-        <!-- <p>Clicking <strong>create account</strong> means that you are agree to our <a href="javascript:void(0)">terms of services</a>.</p> -->
-      
-        </form>
+    </div>
+    <button type="submit" class="btn signup">create account</button>
+</form>
+
     </div>
 
 </div>
@@ -72,13 +68,6 @@ function toggleLogin(){
     document.getElementById("signup-form").style.display="none";
     document.getElementById("login-form").style.display="block";
 }
+
 </script>
 
-
-            <!-- <div class="role-selection"> -->
-            <!-- <label>Select Role:</label>
-                <select class="role-dropdown password-like">
-                    <option value="admin">Admin</option>
-                    <option value="staff">Staff</option>
-                </select>
-        </div> -->
