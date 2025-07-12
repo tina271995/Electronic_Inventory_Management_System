@@ -1,3 +1,4 @@
+import datetime
 from typing import Union
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -8,10 +9,12 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import SQLAlchemyError
 from database import engine, Base, SessionLocal
 from fastapi import FastAPI,Request, Form
-
+from sqlalchemy.orm import Session
 from database import *
+from model import Registration, Login
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -69,17 +72,42 @@ async def register_form(request: Request):
 @app.post("/registerName", response_class=HTMLResponse)
 async def register(
     request: Request, 
-    email: str=Form(...), 
+    email: str = Form(...), 
     username: str = Form(...), 
-    password : str =Form(...), 
-    confirm_password : str =Form(...), 
-    role: str =Form(...)
+    password: str = Form(...), 
+    confirm_password: str = Form(...), 
+    role: str = Form(...)
 ):
-    print("Rakeshhssshshshsshshhs")
-    
     print(f"Email: {email}, Username: {username}, Password: {password}, Role: {role}")
-    
-    return templates.TemplateResponse(request= request, name="login.html")
+    if confirm_password == password:
+    # Open DB session
+        db: Session = SessionLocal()
+
+        # ✅ Step 1: Create Registration entry
+        registration = Registration(
+            Email=email,
+            Password=password,
+            Role=bool(int(role))  # if role is passed as "0" or "1"
+        )
+        db.add(registration)
+        db.commit()
+        db.refresh(registration)  # This gets the auto-generated ID
+
+        # # ✅ Step 2: Create Login entry linked to Registration
+        # login = Login(
+        #     RegistrationID=registration.id,
+        #     LoginTimeStamp=datetime.datetime.now(),
+        #     LoginStatus=True  # Assuming this is a successful login
+        # )
+        # db.add(login)
+        # db.commit()
+
+        db.close()
+        
+        return templates.TemplateResponse(request=request, name="login.html")
+    else:
+        print("Wrong Credentials")
+        return templates.TemplateResponse(request=request, name="login.html")
 
 
 @app.get("/login", response_class=HTMLResponse)
