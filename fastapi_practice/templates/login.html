@@ -9,20 +9,10 @@
     </div>
 
     <div id="login-form">
-        <form action="/login" method="POST">
-            <input type="text" placeholder="Enter email or username"/>
-            <input type="password" placeholder="Enter password"/>
-            <!-- <div class="role-selection">
-                <label>Select Role:</label>
-                <select class="role-dropdown">
-                    <option value="admin">Admin</option>
-                    <option value="staff">Staff</option>
-                </select>
-            </div> -->
-            <button type="button" class="btn login">login</button>
-
-            <!-- <p><a href="javascript:void(0)">Forgotten account</a></p> -->
-         
+        <form action="/loginuser" method="post">
+            <input type="email" name="email" placeholder="Enter email"/>
+            <input type="password" name="password" placeholder="Enter password"/>
+            <button type="submit" class="btn login">login</button>
 
         </form>
     </div>
@@ -68,6 +58,5 @@ function toggleLogin(){
     document.getElementById("signup-form").style.display="none";
     document.getElementById("login-form").style.display="block";
 }
-
 </script>
 

@@ -80,3 +80,21 @@ async def register(
     print(f"Email: {email}, Username: {username}, Password: {password}, Role: {role}")
     
     return templates.TemplateResponse(request= request, name="login.html")
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    print("aakssssssssssssssssssssssssshhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/loginuser", response_class=HTMLResponse)
+async def login_form(
+    request: Request, 
+    email: str=Form(...), 
+    password: str =Form(...)
+):
+    print("Asksksksssssssssssssssssssssssss")
+    
+    print(f"Email: {email}, Password: {password}")
+    
+    return templates.TemplateResponse(request= request, name="login.html")
