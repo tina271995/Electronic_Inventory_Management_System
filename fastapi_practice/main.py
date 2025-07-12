@@ -18,6 +18,15 @@ Base.metadata.create_all(bind=engine)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return  templates.TemplateResponse(request=request, name="login.html")
@@ -112,17 +121,17 @@ async def register(
 
 @app.get("/login", response_class=HTMLResponse)
 async def login(request: Request):
-    print("aakssssssssssssssssssssssssshhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/loginuser", response_class=HTMLResponse)
 async def login_form(
     request: Request, 
-    email: str=Form(...), 
-    password: str =Form(...)
+    db: Session = Depends(get_db),
+    email: str = Form(...), 
+    password: str = Form(...)
 ):
-    print("Asksksksssssssssssssssssssssssss")
-    
-    print(f"Email: {email}, Password: {password}")
-    
-    return templates.TemplateResponse(request= request, name="login.html")
+    user = db.query(Registration).filter(Registration.Email == email).first()
+    if user and user.Password == password:
+        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email})
+    else:
+        return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
