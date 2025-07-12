@@ -2,9 +2,14 @@ from typing import Union
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI,Request
+from fastapi import FastAPI,Request,Depends, HTTPException
+from sqlalchemy import *
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import SQLAlchemyError
 
+from database import *
 app = FastAPI()
+Base.metadata.create_all(bind=engine)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -21,3 +26,32 @@ async def read_item(item_id: int):
 #     return templates.TemplateResponse(
 #         request=request, name="item.html", context={"id": id}
 #     )
+def check_db_connection():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        return {"status": "Database connected ✅"}
+    except SQLAlchemyError as e:
+        print("Error:", str(e))  # Prints to console
+        raise HTTPException(status_code=500, detail=f"DB connection failed: {str(e)}")
+@app.get("/healthcheck")
+def healthcheck():
+    return check_db_connection()
+
+
+@app.get("/db-check")
+def db_check():
+    try:
+        db = Sessionlocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        return {"status": "✅ Connected to MySQL database"}
+    except OperationalError as e:
+        raise HTTPException(status_code=500, detail=f"❌ Connection failed: {str(e)}")
+    
+@app.get("/Connection")
+def root():
+    return {"message": "Hello from FastAPI + SQLAlchemy + MySQL"}
+
+Base.metadata.create_all(bind=engine)
+print("✅ Tables created with FastAPI app startup")
