@@ -208,11 +208,33 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
+            /* display: flex;
+            flex-direction: row; */
+            align-items: center;
+            gap: 8px;
+            /* font-size: 1rem; */
             margin-top: 20px; /* Add some space above the button */
         }
 
         .ok-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* font-size: 1rem; */
+            margin-top: -20px; /* Add some space above the button */
+        }
+
+        .button:hover {
             background-color: var(--primary-dark);
         }
 
@@ -295,14 +317,89 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
+
+        .header-content {
+            display: flex;
+            /* flex-direction: column;
+            flex-grow: 1; */
+        }
+        .header-actions {
+            display: flex;
+        }
+        .quick-add-container {
+            margin-left: auto; /* Pushes the button to the right */
+        }
+
+        /* #quickAddButton {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        } */
         
         .page-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: var(--dark-color);
         }
+
+        /* Add Product Form Styles */
+        #addProductForm {
+            margin-top: 20px;
+        }
+
+        #addProductForm div {
+            margin-bottom: 10px;
+        }
+
+        #addProductForm label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #addProductForm input, #addProductForm textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+
+        /* Confirmation Modal Styles Pop up*/
+        .modal-content1 {
+            background-color: white;
+            margin: 15% auto; /* Center the modal vertically */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 23%; /* Could be more or less, depending on screen size */
+            height: 23%; /* Maximum width */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+        }
+
+        .modal-content1 p {
+            margin-bottom: 20px; /* Space between message and buttons */
+            font-size: 1rem; /* Font size for the message */
+            color: var(--dark-color); /* Use a dark color for the text */
+        }
+
+        .ok-button1 {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 21px;
+            margin-left: 45px;
+        }
+
+        .ok-button1:hover {
+            background-color: var(--primary-dark); /* Darker shade on hover */
+        }
+
         
         /* Footer Styles */
         /*.footer {
@@ -458,7 +555,7 @@
         
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
-            <li class="menu-item active">
+            <li class="menu-item active" id="dashboardMenu">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </li>
@@ -466,7 +563,7 @@
                 <i class="fas fa-barcode"></i>
                 <span>Barcode Scanner</span>
             </li>
-            <li class="menu-item">
+            <li class="menu-item" id="addProductMenu">
                 <i class="fas fa-plus-circle"></i>
                 <span>Add Product</span>
             </li>
@@ -499,18 +596,69 @@
     
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Dashboard</h1>
-            <button class="btn-primary">
+        <div class="page-header" id="dashboardContent">
+            <div class="header-content">
+                <h1 class="page-title">Dashboard</h1>
+            </div>
+            <div class="header-actions">
+                <div class="quick-add-container">
+                    <button class="button" id="quickAddButton">
+                        <i class="fas fa-plus"></i> Quick Add
+                    </button>
+                </div>
+            </div>
+            <!-- <h1 class="page-title">Dashboard</h1> -->
+            <!-- <button class="ok-button" id="quickAddButton">
                 <i class="fas fa-plus"></i> Quick Add
-            </button>
+            </button> -->
         </div>
         
         <div class="dashboard-content">
+            <!-- <h1 class="page-title">Dashboard</h1>
+            <button class="ok-button" id="quickAddButton">
+                <i class="fas fa-plus"></i> Quick Add
+            </button> -->
             <!-- Dashboard widgets will go here -->
-            <!-- <img src="https://placehold.co/1200x600" alt="Dashboard analytics showing inventory levels, recent sales, and stock alerts" /> -->
+        </div>
+
+        <!-- Add Product Form -->
+        <div id="addProductForm" style="display: none;">
+            <h2>Add Product</h2>
+            <form id="productForm">
+                <div>
+                    <label for="productName">Product Name:</label>
+                    <input type="text" id="productName" required>
+                </div>
+                <!-- <div>
+                    <label for="productDesc">Product Description:</label>
+                    <input type="text" id="productDesc" required>
+                </div> -->
+                <div>
+                    <label for="productDesc">Product Description:</label>
+                    <textarea id="productDesc" rows="4" cols="100" required></textarea>
+                </div>
+                <div>
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" required>
+                </div>
+                <div>
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" required>
+                </div>
+                <button type="button" class="ok-button" onclick="saveProduct()">Save</button>
+                <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
+            </form>
         </div>
     </main>
+
+
+    <div id="confirmationModal" class="modal">
+    <div class="modal-content1">
+        <p id="confirmationMessage">Are you sure you want to add this product?</p>
+        <button class="ok-button1" id="confirmYesButton">Yes</button>
+        <button class="ok-button1" id="confirmNoButton">No</button>
+    </div>
+    </div>
     
     <!-- Footer -->
     <!-- <footer class="footer">
@@ -571,6 +719,119 @@
             showAlert("You have successfully logged out.");
             // alert('Logging out...');
             // window.location.href = '/logout';
+        }
+
+
+
+function setActiveMenuItem(activeItemId) {
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.classList.remove('active'); // Remove active class from all items
+    });
+    document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
+}
+
+                // Show the Add Product form
+        // document.querySelector('.menu-item:nth-child(4)').addEventListener('click', function() {
+        document.getElementById('addProductMenu').addEventListener('click', function() {
+            setActiveMenuItem('addProductMenu');
+            document.getElementById('addProductForm').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+        });
+
+        // New code of Dashboard
+         // Show the Dashboard content
+        document.getElementById('dashboardMenu').addEventListener('click', function() {
+            setActiveMenuItem('dashboardMenu');
+            document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
+            document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+        });
+
+        // // Save product function
+        // function saveProduct() {
+        //     const name = document.getElementById('productName').value;
+        //     const desc = document.getElementById('productDesc').value;
+        //     const quantity = document.getElementById('quantity').value;
+        //     const price = document.getElementById('price').value;
+
+        //     // Here you can add logic to save the product (e.g., send to server)
+        //     showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
+        //     cancelAddProduct(); // Hide form after saving
+        // }
+
+        // function saveProduct() {
+        //     const name = document.getElementById('productName').value;
+        //     const desc = document.getElementById('productDesc').value;
+        //     const quantity = document.getElementById('quantity').value;
+        //     const price = document.getElementById('price').value;
+            
+        // // Show confirmation alert
+        //     const confirmation = confirm("Confirm to New product added");
+        //     if (confirmation) {
+        //         // Here you can add logic to save the product (e.g., send to server)
+        //         showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
+        
+        // // Redirect to dashboard after a short delay
+        //         setTimeout(() => {
+        //             document.getElementById('addProductForm').style.display = 'none';
+        //             document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+        //         }, 2000); // 2 seconds delay for the alert to be visible
+        //     }
+        // }
+
+
+        // function saveProduct() {
+        //     const name = document.getElementById('productName').value;
+        //     const desc = document.getElementById('productDesc').value;
+        //     const quantity = document.getElementById('quantity').value;
+        //     const price = document.getElementById('price').value;
+    
+        //     // Show confirmation alert
+        //     const confirmation = confirm("Confirm to New product added");
+        //     if (confirmation) {
+        //         // Here you can add logic to save the product (e.g., send to server)
+        //         // showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
+        
+        //         // Immediately redirect to dashboard
+        //         document.getElementById('addProductForm').style.display = 'none';
+        //         document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+        //     }
+        // }
+
+        function saveProduct() {
+            const name = document.getElementById('productName').value;
+            const desc = document.getElementById('productDesc').value;
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('price').value;
+
+            // Show the confirmation modal
+            document.getElementById("confirmationMessage").innerText = `Confirm to add ${name}?`;
+            document.getElementById("confirmationModal").style.display = "block";
+
+            // Handle confirmation button clicks
+            document.getElementById("confirmYesButton").onclick = function() {
+                // Here you can add logic to save the product (e.g., send to server)
+                // showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
+                
+                // Hide the add product form and show the dashboard content
+                document.getElementById('addProductForm').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+                
+                // Close the confirmation modal
+                document.getElementById("confirmationModal").style.display = "none";
+            };
+
+            document.getElementById("confirmNoButton").onclick = function() {
+                // Close the confirmation modal without saving
+                document.getElementById("confirmationModal").style.display = "none";
+            };
+        }
+
+
+        // Cancel adding product
+        function cancelAddProduct() {
+            document.getElementById('addProductForm').style.display = 'none';
+            document.querySelector('.dashboard-content').style.display = 'block'; // Show dashboard content
         }
     </script>
 </body>
