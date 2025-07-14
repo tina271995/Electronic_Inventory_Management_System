@@ -12,8 +12,9 @@ from fastapi import FastAPI,Request, Form
 from sqlalchemy.orm import Session
 from database import *
 import bcrypt
-from model import Registration, Login
+from model import Registration, Login,Product
 import datetime
+from pydantic import BaseModel
 
 
 ##Calling the FastAPI creating an insance app
@@ -115,6 +116,50 @@ async def login_form(
         )
         db.add(login)
         db.commit()
-        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Id})
+        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.id})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
+
+# Product  endpoints
+class ProductCreate(BaseModel):
+    name: str
+    description: str = ""
+    price: float
+    quantity: int
+
+class ProductUpdate(BaseModel):
+    name: str = None
+    description: str = None
+    price: float = None
+    quantity: int = None
+
+
+# Add product(Staff)
+@app.post("/products/{user_id}")
+async def add_product(user_id: int, product_data: dict, db: Session = Depends(get_db)):
+    # Verify that the user exists
+    user = db.query(Registration).filter(Registration.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Create new product
+    new_product = Product(
+        product_name=product_data.get("product_name"),
+        description=product_data.get("description"),
+        price=product_data.get("price"),
+        quantity=product_data.get("quantity")
+    )
+
+    db.add(new_product)
+    db.commit()
+    db.refresh(new_product)
+
+    return {
+        "message": "Product added successfully",
+        "product": new_product.to_dict()
+    }
+    
+@app.get("/get_products")
+async def list_products(user_id,db:Session = Depends(get_db)):
+    products = db.query(Product).all()
+    return products

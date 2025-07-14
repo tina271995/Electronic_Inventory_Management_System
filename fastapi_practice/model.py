@@ -59,7 +59,8 @@ class InventoryRecord(Base):
     restock = Column(Boolean,nullable=False)
     timestamp_sold = Column(DateTime,nullable=False,default=func.now())
     timestamp_restock = Column(DateTime,nullable=False,default=func.now())
-
+    product = relationship("Product", back_populates="inventory_record")
+    
     def to_dict(self):
         return{
             "id":{self.id},
@@ -78,6 +79,7 @@ class SaleTransaction(Base):
     quantity_sold = Column(Integer,nullable=False)
     timestamp_sold = Column(DateTime,nullable=False,default=func.now())
     user = Column(String(200),nullable=False)
+    product = relationship("Product", back_populates="sale_transaction")
 
     def to_dict(self):
         return{
