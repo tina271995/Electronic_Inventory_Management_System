@@ -41,6 +41,8 @@ class Product(Base):
     description = Column(String(200),nullable=False)
     price = Column(Integer)
     quantity = Column(Integer)
+    inventory_record  = relationship("InventoryRecord", back_populates="product")
+    sale_transaction = relationship("SaleTransaction", back_populates="product")
 
     def to_dict(self):
         return{
