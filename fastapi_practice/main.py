@@ -163,3 +163,10 @@ async def add_product(user_id: int, product_data: dict, db: Session = Depends(ge
 async def list_products(user_id,db:Session = Depends(get_db)):
     products = db.query(Product).all()
     return products
+
+
+# @app.post("/products/{product_id}")
+# async def delete_product(product_id: int, Session = Depends(get_db)):
+#     # Verify that the user exists
+    
+#     pass
