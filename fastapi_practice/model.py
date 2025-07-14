@@ -1,7 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship
 from database import Base
-
 class Registration(Base):
     __tablename__ = "registration"  # fixed typo: resgistration → registration
     id = Column(Integer, primary_key=True, index=True)
@@ -39,6 +38,7 @@ class Product(Base):
     id = Column(Integer,primary_key=True,index=True)
     product_name = Column(String(200),nullable=False)
     description = Column(String(200),nullable=False)
+    TimeStamp = Column(DateTime, nullable=False, default=func.now())
     price = Column(Integer)
     quantity = Column(Integer)
     inventory_record  = relationship("InventoryRecord", back_populates="product")

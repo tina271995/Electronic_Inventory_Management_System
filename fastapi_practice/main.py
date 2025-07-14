@@ -8,14 +8,14 @@ from sqlalchemy import *
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import SQLAlchemyError
 from database import engine, Base, SessionLocal
-from fastapi import FastAPI,Request, Form
+from fastapi import FastAPI,Request, Form,Depends
 from sqlalchemy.orm import Session
 from database import *
 import bcrypt
 from model import Registration, Login,Product
 import datetime
 from pydantic import BaseModel
-
+import setup_db
 
 ##Calling the FastAPI creating an insance app
 app = FastAPI()
@@ -106,7 +106,7 @@ async def login_form(
     password: str = Form(...)
 ):
     user = db.query(Registration).filter(Registration.Email == email).first()
-
+    products = db.query(Product).all()
     # ✅ Verify password using bcrypt
     if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
         login = Login(
@@ -116,7 +116,7 @@ async def login_form(
         )
         db.add(login)
         db.commit()
-        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.id})
+        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
 
@@ -134,39 +134,39 @@ class ProductUpdate(BaseModel):
     quantity: int = None
 
 
+
 # Add product(Staff)
-@app.post("/products/{user_id}")
-async def add_product(user_id: int, product_data: dict, db: Session = Depends(get_db)):
-    # Verify that the user exists
+@app.post("/products", response_class=HTMLResponse)
+async def add_product(
+    request: Request,
+    user_id: int = Form(...),
+    ProductName: str = Form(...),
+    productDesc: str = Form(...),
+    quantity: int = Form(...),
+    price: int = Form(...),
+    db: Session = Depends(get_db)
+):
     user = db.query(Registration).filter(Registration.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Create new product
     new_product = Product(
-        product_name=product_data.get("product_name"),
-        description=product_data.get("description"),
-        price=product_data.get("price"),
-        quantity=product_data.get("quantity")
+        product_name=ProductName,
+        description=productDesc,
+        price=price,
+        quantity=quantity
     )
 
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
 
-    return {
-        "message": "Product added successfully",
-        "product": new_product.to_dict()
-    }
-    
-@app.get("/get_products")
-async def list_products(user_id,db:Session = Depends(get_db)):
+    # ✅ Move this below the insert
     products = db.query(Product).all()
-    return products
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "products": products
+    })
 
 
-# @app.post("/products/{product_id}")
-# async def delete_product(product_id: int, Session = Depends(get_db)):
-#     # Verify that the user exists
-    
-#     pass
