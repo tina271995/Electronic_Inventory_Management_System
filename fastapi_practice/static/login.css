@@ -104,18 +104,20 @@ body{
 .radio-group {
     display: flex;
     align-items: center;
+    margin-left: 50px;
+    gap: 65px;
 }
 .radio-button {
-    margin-right: 20px;
     display: flex;
     align-items: center;
     font-weight: bold;
 }
+
 .radio-button:last-child {
     margin-right: 0;
 }
 .radio-button input {
-    margin-right: 8px;
+    margin-right: 20px;
     accent-color: #4f46e5;
 }
 
