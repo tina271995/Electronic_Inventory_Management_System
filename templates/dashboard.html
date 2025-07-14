@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory - Admin Dashboard</title>
+    <!-- Add to support PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- to insert bootstrap-icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Styles -->
+    <link href="D:\Project_Tina_Backup\Electronic_Inventory_Management_System\Electronic_Inventory_Management_System\static\styles.css" rel="stylesheet" >
+    <!-- to insert charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-logo">SIM</div>
+            <span class="brand-name">Smart Inventory Management</span>
+        </div>
+        
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search products...">
+        </div>
+        
+        <div class="user-menu">
+            <!-- <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div> -->
+            <div class="user-avatar" onclick="toggleDropdown()">TS</div>
+        <!-- </div> -->
+        
+        <div class="dropdown-menu" id="userDropdown">
+            <div class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+            </div>
+            <div class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="user-avatar">TS</div>
+            <div class="user-info">
+                <h4>Tanvi Shirsat</h4>
+                <p>Staff Member</p>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <div class="menu-title">Inventory</div>
+            <li class="menu-item active" id="dashboard">
+                <a href="admin_dashboard.html">
+                    <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <div class="menu-title">Sales</div>
+            <li class="menu-item" id="new-sale">
+                <a href="new_sale.html">
+                    <span class="icon"><i class="fas fa-cash-register"></i></span>
+                    <span>New Sale</span>
+                </a>
+            </li>
+            <li class="menu-item" id="sales-history">
+                <a href="sales_history.html">
+                    <span class="icon"><i class="fas fa-history"></i></span>
+                <span>Sales History</span>
+                </a>
+            </li>
+
+            <!-- <li class="menu-item">
+                <i class="fas fa-history"></i>
+                <span>Sales History</span>
+            </li> -->
+            
+            <div class="menu-title">Reports</div>
+            <li class="menu-item" id="sales-reports">
+                <a href="sales_reports.html">
+                    <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Sales Reports</span>
+                </a>
+            </li>
+            <li class="menu-item" id="inventory-reports">
+                <a href="inventory_reports.html">
+                    <span class="icon"><i class="fas fa-archive"></i></span>
+                <span>Inventory Reports</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="dashboardContent">
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">Admin Dashboard</h1>
+                </div>
+            </div>
+        </div>
+        <!-- Dashboard Cards -->
+
+        <div class="card-grid">
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Products</h3>
+                <i class="bi bi-box-seam" style="font-size: 3rem; align-items: end;"></i>
+                <p>250</p>
+            </div>
+
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Stock</h3>
+                <i class="bi bi-layers" style="font-size: 3rem; align-items: end;"></i>
+                <p>3,500</p>
+            </div>
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Sales</h3>
+                <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
+
+                <p>5 Items</p>
+            </div>
+            <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                
+                <h3>Total Revenue</h3>
+                <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
+                <p>₹5,40,000</p>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row my-4">
+            <div class="col-md-12 mb-3">
+                <div class="card h-100">
+                    <div class="card-header text-center">
+                        <h5>Sales Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="lineChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-5">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-header text-center">
+                        <h5>Stock per Product</h5>
+        </div>
+                    <div class="card-body">
+                        <canvas id="barChart" height="200"></canvas>
+                </div>
+                </div>
+                </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-header text-center">
+                        <h5>Sales Distribution</h5>
+                </div>
+                    <div class="card-body">
+                        <canvas id="pieChart" height="200"></canvas>
+                </div>
+                </div>
+                </div>
+        </div>
+
+        <div id="viewProductsSection" style="display: none;">
+            <h2>View Products</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example product row -->
+                    <tr>
+                        <td>101</td>
+                        <td>2025-07-13</td>
+                        <td>iPhone 15</td>
+                        <td>Latest Apple model</td>
+                        <td>10</td>
+                        <td>₹89,999</td>
+                        <td>
+                            <!-- <button class="ok-button small-btn">Sell</button> -->
+                            <button class="ok-button small-btn" onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
+                            <!-- <button class="ok-button small-btn">Restock</button> -->
+                            <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
+
+                        </td>
+                    </tr>
+                    <!-- Add more rows dynamically from JS/server if needed -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Restock Form Section -->
+        <div id="restockFormSection" style="display: none;">
+            <h2>Restock Product</h2>
+            <form id="restockForm">
+                <div>
+                    <label for="restockProductId">Product ID:</label>
+                    <input type="text" id="restockProductId" readonly>
+                </div>
+                <div>
+                    <label for="restockProductName">Product Name:</label>
+                    <input type="text" id="restockProductName" readonly>
+                </div>
+                <div>
+                    <label for="restockProductDesc">Product Description:</label>
+                    <textarea id="restockProductDesc" rows="3" readonly></textarea>
+                </div>
+                <div>
+                    <label for="restockQuantity">Quantity to Add:</label>
+                    <input type="number" id="restockQuantity" required>
+                </div>
+                <div>
+                    <label for="restockPrice">New Price:</label>
+                    <input type="number" id="restockPrice" required>
+                </div>
+                <button type="button" class="ok-button" onclick="generateRestock()">Generate Restock</button>
+                <button type="button" class="ok-button" onclick="cancelRestock()">Cancel</button>
+            </form>
+        </div>
+
+
+        <!-- Sale Bill View -->
+        <div id="saleBillSection" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button class="ok-button" onclick="downloadBillPDF()">Download Bill PDF</button>
+            </div>
+        <!-- Top Selling -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-success">🏆 Top Selling Products</h5>
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr><th>Name</th><th>Units Sold</th></tr>
+                            </thead>
+                <tbody>
+                                <tr><td>Bluetooth Speaker</td><td>250</td></tr>
+                                <tr><td>Smart Watch</td><td>200</td></tr>
+                                <tr><td>Headphones</td><td>180</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+
+  
+    
+    <!-- Footer -->
+    <!-- <footer class="footer">
+        <div class="copyright">
+            &copy; 2023 Smart Inventory Management System. All rights reserved.
+        </div>
+        
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Help Center</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer> -->
+
+    <!-- Modal for Alert -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <p id="alertMessage">This is an alert message!</p>
+            <button class="ok-button" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    
+    <script>
+
+        function showAlert(message) {
+            document.getElementById("alertMessage").innerText = message;
+            document.getElementById("alertModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("alertModal").style.display = "none";
+        }
+
+        // Toggle user dropdown
+        function toggleDropdown() {
+            var dropdown = document.getElementById("userDropdown");
+            dropdown.classList.toggle("active");
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const avatar = document.querySelector('.user-avatar');
+            
+            if (!avatar.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+        
+        // Logout function
+        //function logout() {
+            //showAlert("You have successfully logged out.");
+            // alert('Logging out...');
+            // window.location.href = '/logout';
+        //}
+
+        
+    </script>
+</body>
+</html>
