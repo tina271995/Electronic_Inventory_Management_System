@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Inventory - Staff Dashboard</title>
+    <!-- Add to support PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -22,6 +24,12 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        /* add for main section scrollable */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
         
         body {
             display: grid;
@@ -29,8 +37,8 @@
             grid-template-columns: 280px 1fr;
             grid-template-areas: 
                 "navbar navbar"
-                "sidebar main"
-                "footer footer";
+                "sidebar main";
+                /* "footer footer"; */
             min-height: 100vh;
             background-color: #f3f4f6;
             overflow: hidden; /* Prevent scrolling */
@@ -39,13 +47,15 @@
         /* Navbar Styles */
         .navbar {
             grid-area: navbar;
+            position: sticky;
             background-color: white;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 2rem;
-            z-index: 10;
+            top: 0;
+            z-index: 100;
         }
         
         .navbar-brand {
@@ -241,9 +251,13 @@
         /* Sidebar Styles */
         .sidebar {
             grid-area: sidebar;
+            position: sticky;
             background-color: var(--dark-color);
             color: white;
             padding: 1.5rem 0;
+            top: 56px; /* adjust based on your navbar height */
+            height: calc(100vh - 56px); /* navbar height subtracted */
+            overflow-y: auto;
         }
         
         .sidebar-header {
@@ -308,7 +322,9 @@
         /* Main Content Styles */
         .main-content {
             grid-area: main;
+            overflow-y: auto;
             padding: 2rem;
+            height: calc(100vh - 56px); /* Adjust to your navbar height */
             background-color: #f3f4f6;
             overflow-y: auto; /* Allow vertical scrolling if needed */
         }
@@ -345,25 +361,140 @@
             color: var(--dark-color);
         }
 
+        /* dashboard */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--gray-color);
+            margin-bottom: 0.5rem;
+        }
+        .card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        .activity-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .activity-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--gray-color);
+        }
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+        .activity-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+
         /* Add Product Form Styles */
-        #addProductForm {
+        #addProductForm, #sellProductForm, #restockFormSection {
             margin-top: 20px;
         }
 
-        #addProductForm div {
+        #addProductForm div, #sellProductForm div, #restockFormSection div {
             margin-bottom: 10px;
         }
 
-        #addProductForm label {
+        #addProductForm label, #sellProductForm label, #restockFormSection label {
             display: block;
             margin-bottom: 5px;
         }
 
-        #addProductForm input, #addProductForm textarea {
+        #addProductForm input, #addProductForm textarea, #sellProductForm input, #sellProductForm textarea, #restockFormSection input, #restockFormSection textarea {
             width: 100%;
             padding: 0.5rem;
             border-radius: 6px;
             border: 1px solid #d1d5db;
+        }
+
+        /* View Products Table Styles */
+        #viewProductsSection {
+            margin-top: 20px;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-table th,
+        .product-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .product-table thead {
+            background-color: #e5e7eb;
+        }
+
+        .small-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+
+        /* view product card sections */
+        .product-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+            padding-top: 1rem;
+        }
+
+        .product-card {
+            background: white;
+            border: 3px solid var(--primary-color); /* or use any color */
+            border-radius: 16px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card h3 {
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        .product-card p {
+            font-size: 0.95rem;
+            color: #374151;
+            margin: 4px 0;
         }
 
 
@@ -400,7 +531,12 @@
             background-color: var(--primary-dark); /* Darker shade on hover */
         }
 
-        
+        .export-button {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
         /* Footer Styles */
         /*.footer {
             grid-area: footer;
@@ -563,24 +699,37 @@
                 <i class="fas fa-barcode"></i>
                 <span>Barcode Scanner</span>
             </li>
-            <li class="menu-item" id="addProductMenu">
-                <i class="fas fa-plus-circle"></i>
-                <span>Add Product</span>
-            </li>
-            <li class="menu-item">
+            <li class="menu-item" id="viewProductsMenu">
                 <i class="fas fa-boxes"></i>
                 <span>View Products</span>
             </li>
-            
-            <div class="menu-title">Sales</div>
-            <li class="menu-item">
-                <i class="fas fa-cash-register"></i>
-                <span>New Sale</span>
+            <div class="menu-title">Upgrade</div>
+            <li class="menu-item" id="addProductMenu">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Products</span>
             </li>
-            <li class="menu-item">
+            <!-- <li class="menu-item">
+                <i class="fas fa-boxes"></i>
+                <span>View Products</span>
+            </li> -->
+            <li class="menu-item" id="restockProducts">
+                <i class="fas fa-plus-circle"></i>
+                <span>Restock Products</span>
+            </li>         
+            <div class="menu-title">Sales</div>
+            <li class="menu-item" id="saleProducts">
+                <i class="fas fa-cash-register"></i>
+                <span>Sale Products</span>
+            </li>
+            <li class="menu-item" id="salesHistoryMenu">
                 <i class="fas fa-history"></i>
                 <span>Sales History</span>
             </li>
+
+            <!-- <li class="menu-item">
+                <i class="fas fa-history"></i>
+                <span>Sales History</span>
+            </li> -->
             
             <div class="menu-title">Reports</div>
             <li class="menu-item">
@@ -596,7 +745,8 @@
     
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-header" id="dashboardContent">
+        <div id="dashboardContent">
+        <div class="page-header">
             <div class="header-content">
                 <h1 class="page-title">Dashboard</h1>
             </div>
@@ -607,12 +757,46 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+            <!-- Dashboard Cards -->
+        <div class="card-grid">
+            <div class="card">
+                <h3>Total Products</h3>
+                <p>250</p>
+            </div>
+            <div class="card">
+                <h3>Today's Sales</h3>
+                <p>₹15,000</p>
+            </div>
+            <div class="card">
+                <h3>Low Stock Alerts</h3>
+                <p>5 Items</p>
+            </div>
+            <div class="card">
+                <h3>Pending Restocks</h3>
+                <p>3 Requests</p>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="activity-section">
+            <h3>Recent Activities</h3>
+            <ul class="activity-list">
+                <li>Sold 2 units of iPhone 15 on 13 July 2025</li>
+                <li>Restocked 5 units of Samsung Galaxy S23</li>
+                <li>Added new product: OnePlus Nord CE 4</li>
+                <li>Updated price for iPad Pro</li>
+                <li>Removed 1 defective unit of Realme Pad</li>
+            </ul>
+        </div>
+    </div>
+
             <!-- <h1 class="page-title">Dashboard</h1> -->
             <!-- <button class="ok-button" id="quickAddButton">
                 <i class="fas fa-plus"></i> Quick Add
             </button> -->
-        </div>
-        
+        <!-- </div> -->
         <div class="dashboard-content">
             <!-- <h1 class="page-title">Dashboard</h1>
             <button class="ok-button" id="quickAddButton">
@@ -649,6 +833,222 @@
                 <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
             </form>
         </div>
+        <!-- Add this section inside <main class="main-content"> after existing sections like #dashboardContent and #addProductForm -->
+        <!-- View Products Section -->
+        <div id="viewProductsSection" style="display: none;">
+            <h2>View Products</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example product row -->
+                    <tr>
+                        <td>101</td>
+                        <td>2025-07-13</td>
+                        <td>iPhone 15</td>
+                        <td>Latest Apple model</td>
+                        <td>10</td>
+                        <td>₹89,999</td>
+                        <td>
+                            <!-- <button class="ok-button small-btn">Sell</button> -->
+                            <button class="ok-button small-btn" onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
+                            <!-- <button class="ok-button small-btn">Restock</button> -->
+                            <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
+
+                        </td>
+                    </tr>
+                    <!-- Add more rows dynamically from JS/server if needed -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sell Product Form -->
+        <div id="sellProductForm" style="display: none;">
+            <h2>Sell Product</h2>
+            <form id="sellForm">
+                <div>
+                    <label>Product ID:</label>
+                    <input type="text" id="sellProductId" readonly>
+                </div>
+                <div>
+                    <label>Manufacture Date:</label>
+                    <input type="date" id="manufactureDate">
+                </div>
+                <div>
+                    <label>Product Name:</label>
+                    <input type="text" id="sellProductName" readonly>
+                </div>
+                <div>
+                    <label>Description:</label>
+                    <textarea id="sellDescription" rows="3" readonly></textarea>
+                </div>
+                <div>
+                    <label>Price (₹):</label>
+                    <input type="number" id="sellPrice" readonly>
+                </div>
+                <div>
+                    <label>Quantity:</label>
+                    <input type="number" id="sellQuantity" oninput="calculateTotal()">
+                </div>
+                <div>
+                    <label>Total Cost (₹):</label>
+                    <input type="text" id="totalCost" readonly>
+                </div>
+                <button type="button" class="ok-button" onclick="generateBill()">Generate Bill</button>
+                <button type="button" class="ok-button" onclick="cancelSell()">Cancel</button>
+            </form>
+        </div>
+
+        <div id="viewProductsSection" style="display: none;">
+            <h2>View Products</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example product row -->
+                    <tr>
+                        <td>101</td>
+                        <td>2025-07-13</td>
+                        <td>iPhone 15</td>
+                        <td>Latest Apple model</td>
+                        <td>10</td>
+                        <td>₹89,999</td>
+                        <td>
+                            <!-- <button class="ok-button small-btn">Sell</button> -->
+                            <button class="ok-button small-btn" onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
+                            <!-- <button class="ok-button small-btn">Restock</button> -->
+                            <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
+
+                        </td>
+                    </tr>
+                    <!-- Add more rows dynamically from JS/server if needed -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Restock Form Section -->
+        <div id="restockFormSection" style="display: none;">
+            <h2>Restock Product</h2>
+            <form id="restockForm">
+                <div>
+                    <label for="restockProductId">Product ID:</label>
+                    <input type="text" id="restockProductId" readonly>
+                </div>
+                <div>
+                    <label for="restockProductName">Product Name:</label>
+                    <input type="text" id="restockProductName" readonly>
+                </div>
+                <div>
+                    <label for="restockProductDesc">Product Description:</label>
+                    <textarea id="restockProductDesc" rows="3" readonly></textarea>
+                </div>
+                <div>
+                    <label for="restockQuantity">Quantity to Add:</label>
+                    <input type="number" id="restockQuantity" required>
+                </div>
+                <div>
+                    <label for="restockPrice">New Price:</label>
+                    <input type="number" id="restockPrice" required>
+                </div>
+                <button type="button" class="ok-button" onclick="generateRestock()">Generate Restock</button>
+                <button type="button" class="ok-button" onclick="cancelRestock()">Cancel</button>
+            </form>
+        </div>
+
+
+        <!-- Sale Bill View -->
+        <div id="saleBillSection" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button class="ok-button" onclick="downloadBillPDF()">Download Bill PDF</button>
+            </div>
+            <h2>Invoice</h2>
+            <table class="product-table">
+                <tbody>
+                    <tr><th>Product ID</th><td id="billProductId"></td></tr>
+                    <tr><th>Manufacture Date</th><td id="billManufactureDate"></td></tr>
+                    <tr><th>Sale ID</th><td id="billSaleId"></td></tr>
+                    <tr><th>Selling Date</th><td id="billSaleDate"></td></tr>
+                    <tr><th>Name</th><td id="billProductName"></td></tr>
+                    <tr><th>Description</th><td id="billDescription"></td></tr>
+                    <tr><th>Quantity</th><td id="billQuantity"></td></tr>
+                    <tr><th>Total Cost (₹)</th><td id="billTotalCost"></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- view products in cards form -->
+        <section id="product-cards-view" style="display: none;">
+            <h2>All Products</h2>
+            <div class="product-card-grid">
+                <!-- Example Product Card -->
+                <div class="product-card">
+                    <p><strong>Product ID:</strong> 101</p>
+                    <p><strong>Date:</strong> 2025-07-13</p>
+                    <p><strong>Name:</strong> iPhone 15</p>
+                    <p><strong>Description:</strong> Latest Apple model</p>
+                    <p><strong>Quantity:</strong> 10</p>
+                    <p><strong>Price:</strong> ₹89,999</p>
+                </div>
+
+                <!-- Add more cards below as needed -->
+            </div>
+        </section>
+
+
+
+        <!-- Sales History Section -->
+        <div id="salesHistorySection" style="display: none;">
+            <h2>Sales History</h2>
+            <div class="export-button">
+                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
+            </div>
+
+            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Sale Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="salesHistoryBody">
+                    <!-- Example sale row -->
+                    <tr>
+                        <td>501</td>
+                        <td>2025-07-13</td>
+                        <td>iPhone 15</td>
+                        <td>Latest Apple model</td>
+                        <td>2</td>
+                        <td>179998</td>
+                    </tr>
+                    <!-- Add more rows dynamically as needed -->
+                </tbody>
+            </table>
+        </div>
+
     </main>
 
 
@@ -715,29 +1115,175 @@
         });
         
         // Logout function
-        function logout() {
-            showAlert("You have successfully logged out.");
+        //function logout() {
+            //showAlert("You have successfully logged out.");
             // alert('Logging out...');
             // window.location.href = '/logout';
+        //}
+
+        // Static user data for demonstration
+        const userData = {
+            registrationID: 'USER-2023-04852',
+            loginTimestamp: new Date().toISOString(),
+            loginStatus: 'active'
+        };
+        // Logout function
+        function logout() {
+            showAlert("You have successfully logged out.");
+            // Update login status
+            userData.loginStatus = 'inactive';
+            
+            // Log to console
+            console.group('User  Logout Details');
+            console.log('Registration ID:', userData.registrationID);
+            console.log('Login Timestamp:', userData.loginTimestamp);
+            console.log('Login Status:', userData.loginStatus);
+            console.groupEnd();
         }
 
 
 
-function setActiveMenuItem(activeItemId) {
-    const menuItems = document.querySelectorAll('.menu-item');
-    menuItems.forEach(item => {
-        item.classList.remove('active'); // Remove active class from all items
-    });
-    document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
-}
+        function setActiveMenuItem(activeItemId) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active'); // Remove active class from all items
+            });
+            document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
+        }
 
-                // Show the Add Product form
+        // Show the Add Product form
         // document.querySelector('.menu-item:nth-child(4)').addEventListener('click', function() {
         document.getElementById('addProductMenu').addEventListener('click', function() {
             setActiveMenuItem('addProductMenu');
             document.getElementById('addProductForm').style.display = 'block';
             document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
         });
+
+        document.getElementById('restockProducts').addEventListener('click', function() {
+            setActiveMenuItem('restockProducts');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('restockProducts').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
+
+        document.getElementById('viewProductsMenu').addEventListener('click', function () {
+            setActiveMenuItem('viewProductsMenu');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'block';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+        });
+
+        document.getElementById('saleProducts').addEventListener('click', function () {
+            setActiveMenuItem('saleProducts');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+        });
+
+        function openSellForm(productId, name, description, price) {
+            document.getElementById('sellProductId').value = productId;
+            document.getElementById('sellProductName').value = name;
+            document.getElementById('sellDescription').value = description;
+            document.getElementById('sellPrice').value = price;
+            document.getElementById('sellQuantity').value = '';
+            document.getElementById('totalCost').value = '';
+
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'block';
+            document.getElementById('saleBillSection').style.display = 'none';
+        }
+
+        function calculateTotal() {
+            const quantity = parseInt(document.getElementById('sellQuantity').value);
+            const price = parseFloat(document.getElementById('sellPrice').value);
+            if (!isNaN(quantity) && !isNaN(price)) {
+                document.getElementById('totalCost').value = quantity * price;
+            }
+        }
+
+        function cancelSell() {
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+        }
+
+        function generateBill() {
+            const productId = document.getElementById('sellProductId').value;
+            const name = document.getElementById('sellProductName').value;
+            const desc = document.getElementById('sellDescription').value;
+            const price = document.getElementById('sellPrice').value;
+            const quantity = document.getElementById('sellQuantity').value;
+            const manufactureDate = document.getElementById('manufactureDate').value;
+            const totalCost = document.getElementById('totalCost').value;
+
+            document.getElementById('billProductId').innerText = productId;
+            document.getElementById('billManufactureDate').innerText = manufactureDate;
+            document.getElementById('billSaleId').innerText = 'SALE' + Math.floor(Math.random() * 10000);
+            document.getElementById('billSaleDate').innerText = new Date().toISOString().split('T')[0];
+            document.getElementById('billProductName').innerText = name;
+            document.getElementById('billDescription').innerText = desc;
+            document.getElementById('billQuantity').innerText = quantity;
+            document.getElementById('billTotalCost').innerText = totalCost;
+
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'block';
+        }
+
+        function downloadBillPDF() {
+            const element = document.getElementById('saleBillSection');
+            const opt = {
+                margin: 1,
+                filename: 'sale_bill_' + Date.now() + '.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Restock The Product
+        function openRestockForm(productId) {
+            // Dummy data (replace with actual logic/server data if available)
+            const productName = "iPhone 15";
+            const productDesc = "Latest Apple model";
+
+            document.getElementById('restockProductId').value = productId;
+            document.getElementById('restockProductName').value = productName;
+            document.getElementById('restockProductDesc').value = productDesc;
+
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('restockFormSection').style.display = 'block';
+        }
+
+        function generateRestock() {
+            // You can extend logic to send to server
+            document.getElementById('restockFormSection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+        }
+
+        function cancelRestock() {
+            document.getElementById('restockFormSection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+        }
+
 
         // New code of Dashboard
          // Show the Dashboard content
@@ -745,7 +1291,41 @@ function setActiveMenuItem(activeItemId) {
             setActiveMenuItem('dashboardMenu');
             document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
             document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
         });
+
+        document.getElementById('salesHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('salesHistoryMenu');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+        });
+
+        function exportSalesToCSV() {
+            const rows = document.querySelectorAll("#salesHistoryBody tr");
+            let csvContent = "Sale ID,Sale Date,Name,Description,Quantity,Total Cost\n";
+
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("td");
+                const rowData = Array.from(cols).map(td => td.textContent.trim()).join(",");
+                csvContent += rowData + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "sales_history_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         // // Save product function
         // function saveProduct() {
@@ -829,10 +1409,25 @@ function setActiveMenuItem(activeItemId) {
 
 
         // Cancel adding product
+        // function cancelAddProduct() {
+        //     document.getElementById('addProductForm').style.display = 'none';
+        //     document.querySelector('.dashboard-content').style.display = 'block'; // Show dashboard content
+        // }
+
         function cancelAddProduct() {
-            document.getElementById('addProductForm').style.display = 'none';
-            document.querySelector('.dashboard-content').style.display = 'block'; // Show dashboard content
+            // Clear all input fields
+            document.getElementById('productName').value = '';
+            document.getElementById('productDesc').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('price').value = '';
+
+            // Show the form again if needed (keep it visible or hidden as per your flow)
+            document.getElementById('addProductForm').style.display = 'block';
+
+            // Also hide dashboard content
+            document.querySelector('.dashboard-content').style.display = 'none';
         }
+
     </script>
 </body>
 </html>
