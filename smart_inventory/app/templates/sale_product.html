@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Sell Product{% endblock %}
+
+{% block content %}
+<h2>Sell Product</h2>
+<form id="sellForm">
+    <div>
+        <label>Product ID:</label>
+        <input type="text" id="sellProductId" readonly>
+    </div>
+    <div>
+        <label>Manufacture Date:</label>
+        <input type="date" id="manufactureDate">
+    </div>
+    <div>
+        <label>Product Name:</label>
+        <input type="text" id="sellProductName" readonly>
+    </div>
+    <div>
+        <label>Description:</label>
+        <textarea id="sellDescription" rows="3" readonly></textarea>
+    </div>
+    <div>
+        <label>Price (₹):</label>
+        <input type="number" id="sellPrice" readonly>
+    </div>
+    <div>
+        <label>Quantity:</label>
+        <input type="number" id="sellQuantity" oninput="calculateTotal()">
+    </div>
+    <div>
+        <label>Total Cost (₹):</label>
+        <input type="text" id="totalCost" readonly>
+    </div>
+    <button type="button" class="ok-button" onclick="generateBill()">Generate Bill</button>
+    <button type="button" class="ok-button" onclick="cancelSell()">Cancel</button>
+</form>
+{% endblock %}

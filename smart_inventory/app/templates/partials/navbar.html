@@ -1,0 +1,27 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <div class="brand-logo">SIM</div>
+        <span class="brand-name">Smart Inventory Management</span>
+    </div>
+
+    <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search products...">
+    </div>
+
+    <div class="user-menu">
+        <div class="user-avatar" onclick="toggleDropdown()">TS</div>
+        <div class="dropdown-menu" id="userDropdown">
+            <div class="dropdown-item">
+                <i class="fas fa-user-circle"></i> Profile
+            </div>
+            <div class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
+        </div>
+    </div>
+</nav>

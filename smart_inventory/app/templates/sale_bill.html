@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Sale Bill{% endblock %}
+
+{% block content %}
+<div id="saleBillSection">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <button class="ok-button" onclick="downloadBillPDF()">Download Bill PDF</button>
+    </div>
+
+    <h2>Invoice</h2>
+    <table class="product-table">
+        <tbody>
+            <tr><th>Product ID</th><td id="billProductId"></td></tr>
+            <tr><th>Manufacture Date</th><td id="billManufactureDate"></td></tr>
+            <tr><th>Sale ID</th><td id="billSaleId"></td></tr>
+            <tr><th>Selling Date</th><td id="billSaleDate"></td></tr>
+            <tr><th>Name</th><td id="billProductName"></td></tr>
+            <tr><th>Description</th><td id="billDescription"></td></tr>
+            <tr><th>Quantity</th><td id="billQuantity"></td></tr>
+            <tr><th>Total Cost (₹)</th><td id="billTotalCost"></td></tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

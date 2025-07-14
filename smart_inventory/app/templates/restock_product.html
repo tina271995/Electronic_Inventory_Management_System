@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Restock Product{% endblock %}
+
+{% block content %}
+<h2>Restock Product</h2>
+<form id="restockForm">
+    <div>
+        <label for="restockProductId">Product ID:</label>
+        <input type="text" id="restockProductId" readonly>
+    </div>
+    <div>
+        <label for="restockProductName">Product Name:</label>
+        <input type="text" id="restockProductName" readonly>
+    </div>
+    <div>
+        <label for="restockProductDesc">Product Description:</label>
+        <textarea id="restockProductDesc" rows="3" readonly></textarea>
+    </div>
+    <div>
+        <label for="restockQuantity">Quantity to Add:</label>
+        <input type="number" id="restockQuantity" required>
+    </div>
+    <div>
+        <label for="restockPrice">New Price:</label>
+        <input type="number" id="restockPrice" required>
+    </div>
+    <button type="button" class="ok-button" onclick="generateRestock()">Generate Restock</button>
+    <button type="button" class="ok-button" onclick="cancelRestock()">Cancel</button>
+</form>
+{% endblock %}

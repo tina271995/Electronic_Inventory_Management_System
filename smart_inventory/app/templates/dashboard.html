@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="dashboardContent">
+
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Dashboard</h1>
+        </div>
+
+        <div class="header-actions">
+            <div class="quick-add-container">
+                <button class="button" id="quickAddButton">
+                    <i class="fas fa-plus"></i> Quick Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="card-grid">
+        <div class="card">
+            <h3>Total Products</h3>
+            <p>250</p>
+        </div>
+        <div class="card">
+            <h3>Today's Sales</h3>
+            <p>₹15,000</p>
+        </div>
+        <div class="card">
+            <h3>Low Stock Alerts</h3>
+            <p>5 Items</p>
+        </div>
+        <div class="card">
+            <h3>Pending Restocks</h3>
+            <p>3 Requests</p>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="activity-section">
+        <h3>Recent Activities</h3>
+        <ul class="activity-list">
+            <li>Sold 2 units of iPhone 15 on 13 July 2025</li>
+            <li>Restocked 5 units of Samsung Galaxy S23</li>
+            <li>Added new product: OnePlus Nord CE 4</li>
+            <li>Updated price for iPad Pro</li>
+            <li>Removed 1 defective unit of Realme Pad</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
