@@ -78,6 +78,20 @@ body{
     border-bottom-right-radius: 20px;
 }
 
+
+.radio-group {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+
+}
+.radio-button {
+    margin-right: 20px; /* Space between radio buttons */
+    font-weight: bold;
+}
+.radio-label {
+    font-weight: bold; 
+}
+
 .form-toggle button:nth-child(2){
     border-bottom-left-radius: 20px;
 }
