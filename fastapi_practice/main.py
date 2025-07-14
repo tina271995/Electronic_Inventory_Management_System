@@ -11,7 +11,9 @@ from database import engine, Base, SessionLocal
 from fastapi import FastAPI,Request, Form
 from sqlalchemy.orm import Session
 from database import *
+import bcrypt
 from model import Registration, Login
+import datetime
 
 
 ##Calling the FastAPI creating an insance app
@@ -73,25 +75,26 @@ async def register(
     confirm_password: str = Form(...), 
     role: str = Form(...)
 ):
-    user = db.query(Registration).filter(Registration.Email == email).first()
-    if user.Email == email:
-        return "Email Already Present"
-    if confirm_password == password:
-        db: Session = SessionLocal()
-        registration = Registration(
-            Email=email,
-            Password=password,
-            Role=bool(int(role)) 
-        )
-        db.add(registration)
-        db.commit()
-        db.refresh(registration)  
-        db.close()
-        
-        return templates.TemplateResponse(request=request, name="login.html")
-    else:
-        print("Wrong Credentials")
-        return templates.TemplateResponse(request=request, name="login.html")
+    existing_user = db.query(Registration).filter(Registration.Email == email).first()
+    if existing_user:
+        return templates.TemplateResponse("register.html", {"request": request, "error": "⚠️ Email already registered."})
+
+    if confirm_password != password:
+        return templates.TemplateResponse("register.html", {"request": request, "error": "⚠️ Passwords do not match."})
+
+    # ✅ Hash password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    registration = Registration(
+        Email=email,
+        Password=hashed_password.decode('utf-8'),  # store as string
+        Role=bool(int(role)) 
+    )
+    db.add(registration)
+    db.commit()
+    db.refresh(registration)
+
+    return templates.TemplateResponse(request=request, name="login.html")
 
 
 @app.post("/loginuser", response_class=HTMLResponse)
@@ -102,7 +105,9 @@ async def login_form(
     password: str = Form(...)
 ):
     user = db.query(Registration).filter(Registration.Email == email).first()
-    if user and user.Password == password:
+
+    # ✅ Verify password using bcrypt
+    if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
         login = Login(
             RegistrationID=user.id,
             LoginTimeStamp=datetime.datetime.now(),
@@ -110,6 +115,6 @@ async def login_form(
         )
         db.add(login)
         db.commit()
-        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email})
-    else:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
+        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Id})
+    
+    return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
