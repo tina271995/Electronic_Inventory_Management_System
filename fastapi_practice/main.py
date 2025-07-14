@@ -12,12 +12,18 @@ from fastapi import FastAPI,Request, Form
 from sqlalchemy.orm import Session
 from database import *
 from model import Registration, Login
-app = FastAPI()
-Base.metadata.create_all(bind=engine)
 
+
+##Calling the FastAPI creating an insance app
+app = FastAPI()
+
+#For knwoing the static Directory for getting all the static Files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+#For knowing the Templates Directory for getting all the Templates Files
 templates = Jinja2Templates(directory="templates")
 
+#For Creating Session opeing and Closing the Database
 def get_db():
     db = SessionLocal()
     try:
@@ -25,21 +31,8 @@ def get_db():
     finally:
         db.close()
 
-
-
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return  templates.TemplateResponse(request=request, name="login.html")
-
-# @app.get("/items/{item_id}")
-# async def read_item(item_id: int):
-#     return {"item_id": item_id}
-
-# @app.get("/items/{id}", response_class=HTMLResponse)
-# async def read_item(request: Request, id: str):
-#     return templates.TemplateResponse(
-#         request=request, name="item.html", context={"id": id}
-#     )
+#For Checking the Database is connected or not
+#{
 def check_db_connection():
     try:
         with engine.connect() as connection:
@@ -48,69 +41,51 @@ def check_db_connection():
     except SQLAlchemyError as e:
         print("Error:", str(e))  # Prints to console
         raise HTTPException(status_code=500, detail=f"DB connection failed: {str(e)}")
+    
 @app.get("/healthcheck")
 def healthcheck():
     return check_db_connection()
+#}
 
+#Setting the Defult Root
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return  templates.TemplateResponse(request=request, name="login.html")
 
-@app.get("/db-check")
-def db_check():
-    try:
-        db = SessionLocal()
-        db.execute(text("SELECT 1"))
-        db.close()
-        return {"status": "✅ Connected to MySQL database"}
-    except OperationalError as e:
-        raise HTTPException(status_code=500, detail=f"❌ Connection failed: {str(e)}")
-    
-@app.get("/Connection")
-def root():
-    return {"message": "Hello from FastAPI + SQLAlchemy + MySQL"}
-
-Base.metadata.create_all(bind=engine)
-print("✅ Tables created with FastAPI app startup")
-
-
-
-
+#Setting the route for Registation Page
 @app.get("/register", response_class=HTMLResponse)
 async def register_form(request: Request):
-    print("Rakeshhhhhhhhhhhhhhhhhh")
     return templates.TemplateResponse("login.html", {"request": request})
 
+#Setting the route for Login Page
+@app.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+#For Registation of the table
 @app.post("/registerName", response_class=HTMLResponse)
 async def register(
     request: Request, 
+    db: Session = Depends(get_db),
     email: str = Form(...), 
     username: str = Form(...), 
     password: str = Form(...), 
     confirm_password: str = Form(...), 
     role: str = Form(...)
 ):
-    print(f"Email: {email}, Username: {username}, Password: {password}, Role: {role}")
+    user = db.query(Registration).filter(Registration.Email == email).first()
+    if user.Email == email:
+        return "Email Already Present"
     if confirm_password == password:
-    # Open DB session
         db: Session = SessionLocal()
-
-        # ✅ Step 1: Create Registration entry
         registration = Registration(
             Email=email,
             Password=password,
-            Role=bool(int(role))  # if role is passed as "0" or "1"
+            Role=bool(int(role)) 
         )
         db.add(registration)
         db.commit()
-        db.refresh(registration)  # This gets the auto-generated ID
-
-        # # ✅ Step 2: Create Login entry linked to Registration
-        # login = Login(
-        #     RegistrationID=registration.id,
-        #     LoginTimeStamp=datetime.datetime.now(),
-        #     LoginStatus=True  # Assuming this is a successful login
-        # )
-        # db.add(login)
-        # db.commit()
-
+        db.refresh(registration)  
         db.close()
         
         return templates.TemplateResponse(request=request, name="login.html")
@@ -118,10 +93,6 @@ async def register(
         print("Wrong Credentials")
         return templates.TemplateResponse(request=request, name="login.html")
 
-
-@app.get("/login", response_class=HTMLResponse)
-async def login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/loginuser", response_class=HTMLResponse)
 async def login_form(
@@ -132,6 +103,13 @@ async def login_form(
 ):
     user = db.query(Registration).filter(Registration.Email == email).first()
     if user and user.Password == password:
+        login = Login(
+            RegistrationID=user.id,
+            LoginTimeStamp=datetime.datetime.now(),
+            LoginStatus=True 
+        )
+        db.add(login)
+        db.commit()
         return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email})
     else:
         return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
