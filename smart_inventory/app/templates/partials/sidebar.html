@@ -8,39 +8,60 @@
     </div>
 
     <ul class="sidebar-menu">
-        <div class="menu-title">Inventory</div>
+        <!-- <div class="menu-title">Inventory</div> -->
         <li class="menu-item" id="dashboardMenu">
-            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+            <div>
+                 <a href="{{ url_for('dashboard') }}">
+            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+            </a>
+            </div>
         </li>
-        <li class="menu-item">
+        <!-- <li class="menu-item">
+            
             <i class="fas fa-barcode"></i><span>Barcode Scanner</span>
-        </li>
+            
+        </li> -->
         <li class="menu-item" id="viewProductsMenu">
-            <i class="fas fa-boxes"></i><span>View Products</span>
+            <a href="{{ url_for('view_products') }}">
+            <i class="fas fa-boxes"></i> <span>View Products</span>
+            </a>
         </li>
 
-        <div class="menu-title">Upgrade</div>
+        <!-- <div class="menu-title">Upgrade</div> -->
         <li class="menu-item" id="addProductMenu">
-            <i class="fas fa-plus-circle"></i><span>Add Products</span>
+            <a href="{{ url_for('add_product') }}">
+            <i class="fas fa-plus-circle"></i> <span>Add Products</span>
+            </a>
         </li>
         <li class="menu-item" id="restockProducts">
-            <i class="fas fa-plus-circle"></i><span>Restock Products</span>
+            <a href="{{ url_for('restock_product') }}">
+            <i class="fas fa-plus-circle"></i> <span>Restock Products</span>
+            </a>
         </li>
 
-        <div class="menu-title">Sales</div>
+        <!-- <div class="menu-title">Sales</div> -->
         <li class="menu-item" id="saleProducts">
-            <i class="fas fa-cash-register"></i><span>Sale Products</span>
+            <a href="{{ url_for('sell_product') }}">
+            <i class="fas fa-cash-register"></i> <span>Sale Products</span>
+            </a>
         </li>
         <li class="menu-item" id="salesHistoryMenu">
-            <i class="fas fa-history"></i><span>Sales History</span>
+            <a href="{{ url_for('sales_history') }}">
+            <i class="fas fa-history"></i> <span>Sales History</span>
+            </a>
         </li>
+        
 
-        <div class="menu-title">Reports</div>
+        <!-- <div class="menu-title">Reports</div>
         <li class="menu-item">
+            
             <i class="fas fa-chart-line"></i><span>Sales Reports</span>
+            
         </li>
         <li class="menu-item">
+            
             <i class="fas fa-archive"></i><span>Inventory Reports</span>
-        </li>
+            
+        </li> -->
     </ul>
 </aside>

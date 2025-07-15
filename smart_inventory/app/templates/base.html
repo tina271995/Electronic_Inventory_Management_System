@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Smart Inventory{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
-
-    <script src="{{ url_for('static', path='script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     {% include "partials/navbar.html" %}
@@ -14,5 +14,6 @@
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
+    <script src="{{ url_for('static', path='script.js') }}"></script>
 </body>
 </html>

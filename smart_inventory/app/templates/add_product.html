@@ -2,9 +2,12 @@
 {% block title %}Add Product{% endblock %}
 
 {% block content %}
+
+<!-- Add Product Form -->
+ <div id="addProductForm">
 <h2><u>Add Product</u></h2>
 <br>
-<form id="addProductForm">
+<form id="productForm">
     <div>
         <label for="productName">Product Name:</label>
         <input type="text" id="productName" required>
@@ -28,4 +31,5 @@
     <button type="button" class="ok-button" onclick="saveProduct()">Save</button>
     <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
 </form>
+</div>
 {% endblock %}
