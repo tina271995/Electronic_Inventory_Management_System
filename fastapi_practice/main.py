@@ -55,6 +55,14 @@ def healthcheck():
 async def sales_history(request: Request):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
 
+@app.get("/sales-reports", response_class=HTMLResponse)
+async def sales_reports(request: Request):
+    return templates.TemplateResponse("diksha_sales_reports.html", {"request": request})
+
+@app.get("/InventoryRecords", response_class=HTMLResponse)
+async def inventory_reports(request: Request):
+    return templates.TemplateResponse("diksha_inventory_reports.html", {"request": request})
+
 #Setting the Defult Root
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

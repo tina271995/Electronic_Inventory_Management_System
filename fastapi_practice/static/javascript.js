@@ -22,14 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
     data: {
         labels: ['Laptop', 'Mouse', 'Phone', 'Tablet'],
         datasets: [{
-        label: '',
+        label: 'Stock Quantity',
         data: [30, 70, 50, 40],
         backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
         }]
     },
     options: {
         aspectRatio: 2, 
-        // plugins: { legend: { display: true } },
+        plugins: { legend: { display: true } },
         scales: { y: { beginAtZero: true } }
     }
     });
@@ -193,4 +193,3 @@ function exportSalesToCSV() {
     link.click(); // Trigger the download
     document.body.removeChild(link); // Clean up
 }
-
