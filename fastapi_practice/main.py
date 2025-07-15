@@ -51,6 +51,9 @@ def healthcheck():
 #}
 
 
+@app.get("/Dashboards", response_class=HTMLResponse)
+async def Dashboards(request: Request):
+    return templates.TemplateResponse("diksha_dashboard.html", {"request": request})
 @app.get("/sales-history", response_class=HTMLResponse)
 async def sales_history(request: Request):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
