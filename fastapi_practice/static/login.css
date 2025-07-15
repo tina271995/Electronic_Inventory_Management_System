@@ -78,6 +78,51 @@ body{
     border-bottom-right-radius: 20px;
 }
 
+
+/* .radio-group {
+    display: flex;
+    align-items: center; 
+}
+.radio-button {
+    margin-right: 20px; 
+    font-weight: bold;
+}
+.radio-label {
+    font-weight: bold; 
+} */
+
+
+
+/* New Css of Select Role */
+
+.radio-label {
+    font-weight: bold;
+    /* color: #333;                  */
+    margin-right: 15px;
+    margin-left: 50px;
+    /* white-space: nowrap; */
+}
+.radio-group {
+    display: flex;
+    align-items: center;
+    margin-left: 50px;
+    gap: 65px;
+}
+.radio-button {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.radio-button:last-child {
+    margin-right: 0;
+}
+.radio-button input {
+    margin-right: 20px;
+    accent-color: #4f46e5;
+}
+
+/* End Css of Select Role */
 .form-toggle button:nth-child(2){
     border-bottom-left-radius: 20px;
 }
