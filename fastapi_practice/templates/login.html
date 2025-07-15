@@ -1,0 +1,62 @@
+<head>
+    <link rel ="stylesheet" href="{{ url_for('static', path='/login.css') }}">
+</head>
+<div class="form-modal">
+
+    <div class="form-toggle">
+        <button id="login-toggle" onclick="toggleLogin()">log in</button>
+        <button id="signup-toggle" onclick="toggleSignup()">sign up</button>
+    </div>
+
+    <div id="login-form">
+        <form action="/loginuser" method="post">
+            <input type="email" name="email" placeholder="Enter email"/>
+            <input type="password" name="password" placeholder="Enter password"/>
+            <button type="submit" class="btn login">login</button>
+
+        </form>
+    </div>
+
+    <div id="signup-form">
+       <form action="http://127.0.0.1:8000/registerName" method="post">
+    <input type="email" name="email" placeholder="Enter your email"/>
+    <input type="text" name="username" placeholder="Choose username"/> 
+    <input type="password" name="password" placeholder="Create password"/>
+    <input type="password" name="confirm_password" placeholder="Confirm password"/>
+
+    <div class="role-selection">
+        <span class="radio-label">Select Role:</span>
+        <div class="radio-group">
+            <label class="radio-button">
+                <input type="radio" name="role" value="1" checked>Admin</label>
+            <label class="radio-button">
+                <input type="radio" name="role" value="0">Staff</label>
+        </div>
+    </div>
+    <button type="submit" class="btn signup">create account</button>
+</form>
+
+    </div>
+
+</div>
+
+<script>
+function toggleSignup(){
+   document.getElementById("login-toggle").style.backgroundColor="#fff";
+    document.getElementById("login-toggle").style.color="#222";
+    document.getElementById("signup-toggle").style.backgroundColor="#57b846";
+    document.getElementById("signup-toggle").style.color="#fff";
+    document.getElementById("login-form").style.display="none";
+    document.getElementById("signup-form").style.display="block";
+}
+
+function toggleLogin(){
+    document.getElementById("login-toggle").style.backgroundColor="#57B846";
+    document.getElementById("login-toggle").style.color="#fff";
+    document.getElementById("signup-toggle").style.backgroundColor="#fff";
+    document.getElementById("signup-toggle").style.color="#222";
+    document.getElementById("signup-form").style.display="none";
+    document.getElementById("login-form").style.display="block";
+}
+</script>
+
