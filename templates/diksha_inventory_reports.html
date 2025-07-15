@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Inventory - Admin Dashboard</title>
+    <title>Smart Inventory - Inventory Reports</title>
     <!-- Add to support PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +15,6 @@
     <link href="D:\Project_Tina\Electronic_Inventory_Management_System\static\styles.css" rel="stylesheet" >
     <!-- to insert charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
 </head>
 <body>
     <!-- Navbar -->
@@ -52,7 +51,7 @@
             </div>
         </div>
     </nav>
-    
+
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -65,7 +64,7 @@
         
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
-            <li class="menu-item active" id="dashboard">
+            <li class="menu-item" id="dashboard">
                 <a href="dashboard.html">
                     <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                     <span>Dashboard</span>
@@ -92,7 +91,7 @@
                 <span>Sales Reports</span>
                 </a>
             </li>
-            <li class="menu-item" id="inventory-reports">
+            <li class="menu-item active" id="inventory-reports">
                 <a href="diksha_inventory_reports.html">
                     <span class="icon"><i class="fas fa-archive"></i></span>
                 <span>Inventory Reports</span>
@@ -100,7 +99,7 @@
             </li>
         </ul>
     </aside>
-    
+
     <!-- Main Content -->
     <main class="main-content">
         <div id="dashboardContent">
@@ -110,103 +109,62 @@
                 </div>
             </div>
         </div>
-        <!-- Dashboard Cards -->
-
-        <div class="card-grid">
-            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Products</h3>
-                <i class="bi bi-box-seam" style="font-size: 3rem; align-items: end;"></i>
-                <p>250</p>
-            </div>
-
-            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Stock</h3>
-                <i class="bi bi-layers" style="font-size: 3rem; align-items: end;"></i>
-                <p>3,500</p>
-            </div>
-            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Sales</h3>
-                <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
-
-                <p>5 Items</p>
-            </div>
-            <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                
-                <h3>Total Revenue</h3>
-                <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
-                <p>₹5,40,000</p>
-            </div>
-        </div>
-
-        <!-- Charts Row -->
-        <div class="row my-4">
-            <div class="col-md-12 mb-3">
-                <div class="card h-100">
-                    <div class="card-header text-center">
-                        <h5>Sales Trend</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="lineChart" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div> <br>
-        <div class="row my-5">
-            <div class="chart-grid">
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100"> <!-- Adjust height as needed -->
-                        <div class="card-header text-center">
-                            <h5>Stock per Product</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="barChart" height="200"></canvas> <!-- Adjust height as needed -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-5"> <!-- Adjust height as needed -->
-                        <div class="card-header text-center">
-                            <h5>Sales Distribution</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="pieChart" height="50%"></canvas> <!-- Adjust height as needed -->
-                        </div>
-                    </div>
+        <!-- Inventory Table -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Product Inventory</h5>
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>In Stock</th>
+                                <th>Sold</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Smart Watch</td>
+                                <td>Fitness & Heart Rate Monitor</td>
+                                <td>₹1500</td>
+                                <td>120</td>
+                                <td>80</td>
+                                <td>
+                                    <!-- <button class="ok-button small-btn">Sell</button> -->
+                                    <button class="ok-button small-btn" onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
+                                    <!-- <button class="ok-button small-btn">Restock</button> -->
+                                    <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Bluetooth Speaker</td>
+                                <td>Wireless Portable Speaker</td>
+                                <td>₹1000</td>
+                                <td>85</td>
+                                <td>115</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Power Bank</td>
+                                <td>10,000mAh Battery Backup</td>
+                                <td>₹800</td>
+                                <td>60</td>
+                                <td>140</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </main>
-
-
-  
-    
-    <!-- Footer -->
-    <!-- <footer class="footer">
-        <div class="copyright">
-            &copy; 2023 Smart Inventory Management System. All rights reserved.
-        </div>
-        
-        <div class="footer-links">
-            <a href="#" class="footer-link">Privacy Policy</a>
-            <a href="#" class="footer-link">Terms of Service</a>
-            <a href="#" class="footer-link">Help Center</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
-        </div>
-    </footer> -->
-
-    <!-- Modal for Alert -->
-    <div id="alertModal" class="modal">
-        <div class="modal-content">
-            <p id="alertMessage">This is an alert message!</p>
-            <button class="ok-button" onclick="closeModal()">OK</button>
-        </div>
-    </div>
-    
-
 </body>
 </html>

@@ -25,19 +25,22 @@ body {
         "footer footer";
     min-height: 100vh;
     background-color: #f3f4f6;
-    overflow: hidden; /* Prevent scrolling */
+    overflow-y: scroll; /* Prevent scrolling */
 }
 
 /* Navbar Styles */
 .navbar {
     grid-area: navbar;
+    position: fixed;
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 2rem;
-    z-index: 10;
+    top: 0;
+    width: 100%;
+    z-index: 100;
 }
 
 .navbar-brand {
@@ -169,9 +172,16 @@ body {
 /* Sidebar Styles */
 .sidebar {
     grid-area: sidebar;
+    position: sticky;
     background-color: var(--dark-color);
     color: white;
     padding: 1.5rem 0;
+    top: 64px;
+    width: 265px;
+    /* adjust based on your navbar height */
+    height: calc(100vh - 56px);
+    /* navbar height subtracted */
+    overflow-y: auto;
 }
 
 .sidebar-header {
@@ -196,8 +206,9 @@ body {
     color: #9ca3af;
 }
 
-.sidebar-menu {
-    list-style: none;
+.sidebar-menu a {
+    color: white; /* Set link color to white */
+    text-decoration: none; /* Remove underline from links */
 }
 
 .menu-title {
@@ -252,6 +263,39 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--dark-color);
+}
+
+/* dashboard */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    font-size: 1.2rem;
+    color: var(--gray-color);
+    margin-bottom: 0.5rem;
+}
+
+.card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+}
+
+.chart-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
 }
 
 /* Footer Styles */
