@@ -111,15 +111,21 @@
         <div id="dashboardContent">
             <div class="page-header">
                 <div class="header-content">
-                    <h1 class="page-title">Inventory Report</h1>
+                    <div id="InventorySection">
+                        <h2>Inventory Report</h2>
+                    </div>
                 </div>
+                <div class="export-button">
+                    <button class="ok-button" onclick="exportSalesToCSV()">Export Inventory Report</button>
+                </div>
+                
             </div>
         </div>
 
         <!-- Products in Warehouse Report -->
         <div class="card">
             <div class="card-header">
-                <h5>Products in Warehouse</h5>
+                <h2>Products in Warehouse</h2><br>
             </div>
             <div class="card-body">
                 <table class="table table-striped">
@@ -129,32 +135,31 @@
                             <th>Name</th>
                             <th>Description</th>
                             <th>Quantity</th>
-                            <th>Price</th>
+                            <th>Price (₹)</th>
                         </tr>
                     </thead>
-                    <tbody id="warehouseTableBody">
+                    <tbody id="InventorySectionBody">
                         <tr>
                             <td>101</td>
                             <td>iPhone 15</td>
                             <td>Latest Apple model</td>
                             <td>10</td>
-                            <td>₹89,999</td>
+                            <td>89,999</td>
                         </tr>
                         <tr>
                             <td>102</td>
                             <td>Samsung Galaxy S21</td>
                             <td>Latest Samsung model</td>
                             <td>15</td>
-                            <td>₹74,999</td>
+                            <td>74,999</td>
                         </tr>
                         <tr>
                             <td>103</td>
                             <td>MacBook Pro</td>
                             <td>Apple laptop</td>
                             <td>5</td>
-                            <td>₹1,99,999</td>
+                            <td>1,99,999</td>
                         </tr>
-                        <!-- Add more products as needed -->
                     </tbody>
                 </table>
             </div>
