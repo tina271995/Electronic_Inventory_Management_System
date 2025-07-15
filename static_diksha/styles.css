@@ -25,7 +25,8 @@ body {
         "footer footer";
     min-height: 100vh;
     background-color: #f3f4f6;
-    overflow-y: scroll; /* Prevent scrolling */
+    overflow-y: scroll; /* Allows scrolling */
+    margin-top: 56px;
 }
 
 /* Navbar Styles */
@@ -265,6 +266,25 @@ body {
     color: var(--dark-color);
 }
 
+.button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* font-size: 1rem; */
+    margin-top: -20px;
+    /* Add some space above the button */
+}
+
+.button:hover {
+    background-color: var(--primary-dark);
+}
+
 /* dashboard */
 .card-grid {
     display: grid;
@@ -297,6 +317,105 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
 }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1000;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Could be more or less, depending on screen size */
+    max-width: 500px;
+    /* Maximum width */
+    border-radius: 8px;
+    /* Rounded corners */
+}
+
+.ok-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    /* display: flex;
+    flex-direction: row; */
+    align-items: center;
+    gap: 8px;
+    /* font-size: 1rem; */
+    margin-top: 20px;
+    /* Add some space above the button */
+}
+
+.ok-button:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Table Styles */
+table {
+    width: 100%; /* Full width */
+    border-collapse: collapse; /* Remove space between borders */
+    margin-bottom: 20px; /* Space below the table */
+}
+
+th, td {
+    padding: 12px; /* Padding inside cells */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #dee2e6; /* Border color */
+}
+
+th {
+    background-color: #007bff; /* Header background color */
+    color: white; /* Header text color */
+    font-weight: bold; /* Bold text for headers */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray background for even rows */
+}
+
+tr:hover {
+    background-color: #e9ecef; /* Light gray background on hover */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Light background for odd rows */
+}
+
+.table-striped tbody tr:hover {
+    background-color: #f1f1f1; /* Slightly darker on hover */
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    table {
+        display: block; /* Make table block for smaller screens */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+}
+
 
 /* Footer Styles */
 /*.footer {

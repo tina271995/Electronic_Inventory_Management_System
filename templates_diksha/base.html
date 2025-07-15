@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -387,32 +386,32 @@
             color: var(--dark-color);
         }
 
-/* dashboard */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
+        /* dashboard */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
 
-.card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
 
-.card h3 {
-    font-size: 1.2rem;
-    color: var(--gray-color);
-    margin-bottom: 0.5rem;
-}
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--gray-color);
+            margin-bottom: 0.5rem;
+        }
 
-.card p {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-dark);
-}
+        .card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
 
         .activity-section {
             background: white;
@@ -1091,7 +1090,7 @@
 
 
         <!-- view products in cards form -->
-        <section id="product-cards-view">
+        <section id="product-cards-view" style="display: none;">
             <h2>All Products</h2>
             <div class="product-card-grid">
                 {% for product in products %}
@@ -1387,6 +1386,7 @@
         document.getElementById('dashboardMenu').addEventListener('click', function () {
             setActiveMenuItem('dashboardMenu');
             document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
+            document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'none';
@@ -1398,6 +1398,7 @@
         document.getElementById('salesHistoryMenu').addEventListener('click', function () {
             setActiveMenuItem('salesHistoryMenu');
             document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'block';
