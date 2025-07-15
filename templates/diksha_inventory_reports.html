@@ -65,7 +65,7 @@
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
             <li class="menu-item" id="dashboard">
-                <a href="dashboard.html">
+                <a href="diksha_dashboard.html">
                     <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                     <span>Dashboard</span>
                 </a>
@@ -105,66 +105,57 @@
         <div id="dashboardContent">
             <div class="page-header">
                 <div class="header-content">
-                    <h1 class="page-title">Admin Dashboard</h1>
+                    <h1 class="page-title">Inventory Report</h1>
                 </div>
             </div>
         </div>
-        <!-- Inventory Table -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Product Inventory</h5>
-                    <table class="product-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>In Stock</th>
-                                <th>Sold</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Smart Watch</td>
-                                <td>Fitness & Heart Rate Monitor</td>
-                                <td>₹1500</td>
-                                <td>120</td>
-                                <td>80</td>
-                                <td>
-                                    <!-- <button class="ok-button small-btn">Sell</button> -->
-                                    <button class="ok-button small-btn" onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
-                                    <!-- <button class="ok-button small-btn">Restock</button> -->
-                                    <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bluetooth Speaker</td>
-                                <td>Wireless Portable Speaker</td>
-                                <td>₹1000</td>
-                                <td>85</td>
-                                <td>115</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Power Bank</td>
-                                <td>10,000mAh Battery Backup</td>
-                                <td>₹800</td>
-                                <td>60</td>
-                                <td>140</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+
+        <!-- Products in Warehouse Report -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Products in Warehouse</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="warehouseTableBody">
+                        <tr>
+                            <td>101</td>
+                            <td>iPhone 15</td>
+                            <td>Latest Apple model</td>
+                            <td>10</td>
+                            <td>₹89,999</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Samsung Galaxy S21</td>
+                            <td>Latest Samsung model</td>
+                            <td>15</td>
+                            <td>₹74,999</td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td>MacBook Pro</td>
+                            <td>Apple laptop</td>
+                            <td>5</td>
+                            <td>₹1,99,999</td>
+                        </tr>
+                        <!-- Add more products as needed -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
+
+   
+
 </body>
 </html>
