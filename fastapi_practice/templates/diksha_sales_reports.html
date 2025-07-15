@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +11,15 @@
     <!-- to insert bootstrap-icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Javascript -->
-     <script src="D:\Project_Tina\Electronic_Inventory_Management_System\static\javascript.js"></script>
+    <script src="{{ url_for('static', path='javascript.js') }}"></script>
+
     <!-- Styles -->
-    <link href="D:\Project_Tina\Electronic_Inventory_Management_System\static\styles.css" rel="stylesheet" >
+    <!-- <link href="D:\Project_Tina\Electronic_Inventory_Management_System\static\styles.css" rel="stylesheet" > -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/Admin.css') }}">
     <!-- to insert charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -23,30 +27,30 @@
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-        
+
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Search products...">
         </div>
-        
+
         <div class="user-menu">
             <!-- <div class="notifications">
                 <i class="fas fa-bell"></i>
                 <span class="notification-badge">3</span>
             </div> -->
             <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-        <!-- </div> -->
-        
-        <div class="dropdown-menu" id="userDropdown">
-            <div class="dropdown-item">
-                <i class="fas fa-user-circle"></i> Profile
-            </div>
-            <div class="dropdown-item">
-                <i class="fas fa-cog"></i> Settings
-            </div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <!-- </div> -->
+
+            <div class="dropdown-menu" id="userDropdown">
+                <div class="dropdown-item">
+                    <i class="fas fa-user-circle"></i> Profile
+                </div>
+                <div class="dropdown-item">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </div>
             </div>
         </div>
@@ -61,7 +65,7 @@
                 <p>Staff Member</p>
             </div>
         </div>
-        
+
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
             <li class="menu-item active" id="dashboard">
@@ -70,12 +74,12 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-            
+
             <div class="menu-title">Sales</div>
             <li class="menu-item" id="sales-history">
                 <a href="diksha_sales_history.html">
                     <span class="icon"><i class="fas fa-history"></i></span>
-                <span>Sales History</span>
+                    <span>Sales History</span>
                 </a>
             </li>
 
@@ -83,18 +87,18 @@
                 <i class="fas fa-history"></i>
                 <span>Sales History</span>
             </li> -->
-            
+
             <div class="menu-title">Reports</div>
             <li class="menu-item" id="sales-reports">
                 <a href="diksha_sales_reports.html">
                     <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Sales Reports</span>
+                    <span>Sales Reports</span>
                 </a>
             </li>
             <li class="menu-item" id="inventory-reports">
                 <a href="diksha_inventory_reports.html">
                     <span class="icon"><i class="fas fa-archive"></i></span>
-                <span>Inventory Reports</span>
+                    <span>Inventory Reports</span>
                 </a>
             </li>
         </ul>
@@ -156,9 +160,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>2025-07-01</td><td>Smart Watch</td><td>50</td><td>₹75,000</td></tr>
-                            <tr><td>2025-07-02</td><td>Bluetooth Speaker</td><td>30</td><td>₹45,000</td></tr>
-                            <tr><td>2025-07-03</td><td>Power Bank</td><td>20</td><td>₹20,000</td></tr>
+                            <tr>
+                                <td>2025-07-01</td>
+                                <td>Smart Watch</td>
+                                <td>50</td>
+                                <td>₹75,000</td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-02</td>
+                                <td>Bluetooth Speaker</td>
+                                <td>30</td>
+                                <td>₹45,000</td>
+                            </tr>
+                            <tr>
+                                <td>2025-07-03</td>
+                                <td>Power Bank</td>
+                                <td>20</td>
+                                <td>₹20,000</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -206,4 +225,5 @@
         };
     </script>
 </body>
+
 </html>

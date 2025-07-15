@@ -105,7 +105,9 @@ async def login_form(
     email: str = Form(...), 
     password: str = Form(...)
 ):
+    
     user = db.query(Registration).filter(Registration.Email == email).first()
+    print(user.Role)
     products = db.query(Product).all()
     # ✅ Verify password using bcrypt
     if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
@@ -116,7 +118,11 @@ async def login_form(
         )
         db.add(login)
         db.commit()
-        return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
+        # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
+        if user.Role:
+            return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
+        else:
+            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
 
