@@ -50,6 +50,11 @@ def healthcheck():
     return check_db_connection()
 #}
 
+
+@app.get("/sales-history", response_class=HTMLResponse)
+async def sales_history(request: Request):
+    return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
+
 #Setting the Defult Root
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
