@@ -12,7 +12,7 @@ from fastapi import FastAPI,Request, Form,Depends
 from sqlalchemy.orm import Session
 from database import *
 import bcrypt
-from model import Registration, Login,Product
+from model import InventoryRecord, Registration, Login,Product
 import datetime
 from pydantic import BaseModel
 import setup_db
@@ -147,9 +147,11 @@ async def add_product(
     db: Session = Depends(get_db)
 ):
     user = db.query(Registration).filter(Registration.id == user_id).first()
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    products = db.query(Product).all()
     new_product = Product(
         product_name=ProductName,
         description=productDesc,
@@ -160,8 +162,19 @@ async def add_product(
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
+    
+    last_ele = db.query(Product).order_by(Product.id.desc()).first()
+    Inventory_Record = InventoryRecord(
+        product_id = last_ele.id,
+        quantity_sold=None,
+        restock=None,
+        timestamp_sold=None,
+        timestamp_restock=None
+    )
 
-    # ✅ Move this below the insert
+    db.add(Inventory_Record)
+    db.commit()
+    db.refresh(Inventory_Record)
     products = db.query(Product).all()
 
     return templates.TemplateResponse("dashboard.html", {

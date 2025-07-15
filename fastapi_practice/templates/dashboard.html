@@ -1091,7 +1091,7 @@
 
 
         <!-- view products in cards form -->
-        <section id="product-cards-view">
+        <section id="product-cards-view" style="display: none;">
             <h2>All Products</h2>
             <div class="product-card-grid">
                 {% for product in products %}
@@ -1387,6 +1387,7 @@
         document.getElementById('dashboardMenu').addEventListener('click', function () {
             setActiveMenuItem('dashboardMenu');
             document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
+            document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'none';
@@ -1398,6 +1399,7 @@
         document.getElementById('salesHistoryMenu').addEventListener('click', function () {
             setActiveMenuItem('salesHistoryMenu');
             document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'block';

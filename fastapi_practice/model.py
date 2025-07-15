@@ -57,10 +57,10 @@ class InventoryRecord(Base):
     __tablename__ = 'inventory_record'
     id = Column(Integer,primary_key=True,index=True)
     product_id = Column(Integer,ForeignKey("product.id"),nullable=False)
-    quantity_sold = Column(Integer,nullable=False)
-    restock = Column(Boolean,nullable=False)
-    timestamp_sold = Column(DateTime,nullable=False,default=func.now())
-    timestamp_restock = Column(DateTime,nullable=False,default=func.now())
+    quantity_sold = Column(Integer,nullable=True)
+    restock = Column(Boolean,nullable=True)
+    timestamp_sold = Column(DateTime,nullable=True,default=func.now())
+    timestamp_restock = Column(DateTime,nullable=True,default=func.now())
     product = relationship("Product", back_populates="inventory_record")
     
     def to_dict(self):
