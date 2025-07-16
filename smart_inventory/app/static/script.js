@@ -59,10 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function generateBill() {
     const productId = document.getElementById('sellProductId').value;
     const quantity = document.getElementById('quantity').value;
+    const user = document.getElementById('user').value; // Get the value of the user input
 
     // Populate bill details
     document.getElementById('billProductId').innerText = productId;
-    document.getElementById('billManufactureDate').innerText = new Date().toISOString().split('T')[0]; // Example date
+    document.getElementById('userID').innerText = user;
     document.getElementById('billSaleId').innerText = 'SALE' + Math.floor(Math.random() * 10000);
     document.getElementById('billSaleDate').innerText = new Date().toISOString().split('T')[0];
     document.getElementById('billProductName').innerText = 'iPhone 15'; // Replace with actual product name
@@ -79,6 +80,8 @@ function generateBill() {
 // Download Bill as PDF
 function downloadBillPDF() {
     const element = document.getElementById('saleBillSection');
+    const button = document.querySelector('.ok-button');
+    button.style.display='none';
     const opt = {
         margin: 1,
         filename: 'sale_bill_' + Date.now() + '.pdf',
@@ -89,6 +92,7 @@ function downloadBillPDF() {
         // Restore products view after download
         document.getElementById('viewProductsSection').style.display = 'block'; // Show the products view
         document.getElementById('saleBillSection').style.display = 'none'; // Hide the invoice
+        button.style.display='block'; // restore after export
     });
 }
 

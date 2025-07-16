@@ -2,11 +2,19 @@
 {% block title %}View Products{% endblock %}
 
 {% block content %}
-<h2>All Products</h2>
+<div class="search-bar">
+    <div style="width:50%;">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search products...">
+    </div>
+</div>
+<br>
+<!-- <h2><u>All Products</u></h2> -->
+<!-- <br> -->
 <section id="product-cards-view">
     <div class="product-card-grid">
         <!-- Example Product Card -->
-        <div class="product-card">
+        <div class="product-card">  
             <p><strong>Product ID:</strong> 101</p>
             <p><strong>Date:</strong> 2025-07-13</p>
             <p><strong>Name:</strong> iPhone 15</p>
