@@ -5,7 +5,9 @@
 <div class="search-bar">
     <div style="width:50%;">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Search products...">
+        <form action="/view-products" method="get">
+            <input type="text" name="search" placeholder="Search products..." value="{{ search }}">
+        </form>
     </div>
 </div>
 <br>
@@ -13,15 +15,18 @@
 <!-- <br> -->
 <section id="product-cards-view">
     <div class="product-card-grid">
-        <!-- Example Product Card -->
+        {% for product in products %}
         <div class="product-card">  
-            <p><strong>Product ID:</strong> 101</p>
-            <p><strong>Date:</strong> 2025-07-13</p>
-            <p><strong>Name:</strong> iPhone 15</p>
-            <p><strong>Description:</strong> Latest Apple model</p>
-            <p><strong>Quantity:</strong> 10</p>
-            <p><strong>Price:</strong> ₹89,999</p>
+            <p><strong>Product ID:</strong> {{ product.id }}</p>
+            <p><strong>Date:</strong> {{ product.date }}</p>
+            <p><strong>Name:</strong> {{ product.name }}</p>
+            <p><strong>Description:</strong> {{ product.desc }}</p>
+            <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+            <p><strong>Price:</strong> ₹{{ product.price }}</p>
         </div>
+        {% else %}
+        <p>No products found.</p>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

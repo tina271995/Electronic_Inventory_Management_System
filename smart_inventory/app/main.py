@@ -13,6 +13,15 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Set up Jinja2 templates directory
 templates = Jinja2Templates(directory="templates")
 
+# Sample product data
+products = [
+    {"id": 101, "date": "2025-07-13", "name": "iPhone 15", "desc": "Latest Apple model", "quantity": 10, "price": 89999},
+    {"id": 102, "date": "2025-07-14", "name": "Samsung Galaxy S23", "desc": "Latest Samsung model", "quantity": 5, "price": 74999},
+    {"id": 103, "date": "2025-07-15", "name": "Google Pixel 7", "desc": "Latest Google model", "quantity": 8, "price": 59999},
+    {"id": 104, "date": "2025-07-16", "name": "OnePlus 11", "desc": "Flagship killer", "quantity": 7, "price": 54999},
+    {"id": 105, "date": "2025-07-17", "name": "Xiaomi 13 Pro", "desc": "Chinese flagship", "quantity": 12, "price": 49999},
+]
+
 # Route for the dashboard
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request):
@@ -25,8 +34,25 @@ def add_product(request: Request):
 
 # Route for viewing products
 @app.get("/view-products", response_class=HTMLResponse)
-def view_products(request: Request):
-    return templates.TemplateResponse("view_products.html", {"request": request})
+def view_products(request: Request, search: str = ""):
+    filtered_products = products
+    
+    if search:
+        filtered_products = [
+            product for product in products 
+            if search.lower() in product["name"].lower() or 
+               search in str(product["id"])
+        ]
+    
+    return templates.TemplateResponse(
+        "view_products.html", 
+        {
+            "request": request, 
+            "products": filtered_products, 
+            "search": search,
+            "products_count": len(filtered_products)
+        }
+    )
 
 # Route for selling a product
 @app.get("/sell-product", response_class=HTMLResponse)
@@ -38,23 +64,6 @@ def sell_product(request: Request):
 @app.get("/restock-product", response_class=HTMLResponse)
 def restock_product(request: Request):
     return templates.TemplateResponse("restock_product.html", {"request": request})
-
-# @app.post("/restock-product", response_class=HTMLResponse)
-# def restock_product(request: Request, product_id: str = Form(None), product_name: str = Form(None), product_desc: str = Form(None)):
-#     product = None
-#     if product_id:
-#         product = {
-#             "id": product_id,
-#             "name": product_name,
-#             "desc": product_desc
-#         }
-    # return templates.TemplateResponse("restock_product.html", {"request": request, "product": product})
-
-# Route for generating restock
-# @app.post("/generate-restock")
-# def generate_restock(restockProductId: str = Form(...), restockQuantity: int = Form(...), restockPrice: float = Form(...)):
-#     # Logic to handle the restock process
-#     return {"message": f"Restocked Product ID: {restockProductId} with Quantity: {restockQuantity} and New Price: ₹{restockPrice}"}
 
 # Route for sales history
 @app.get("/sales-history", response_class=HTMLResponse)
