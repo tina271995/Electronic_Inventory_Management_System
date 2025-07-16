@@ -5,7 +5,7 @@
 <!-- <h2><u>Sales History</u></h2> -->
 
 <div class="export-button">
-    <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
+    <button type="button" class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
 </div>
 
 <table class="product-table">
@@ -20,15 +20,16 @@
         </tr>
     </thead>
     <tbody id="salesHistoryBody">
-        <!-- Example row -->
+        {% for sale in sales_data %}
         <tr>
-            <td>501</td>
-            <td>2025-07-13</td>
-            <td>iPhone 15</td>
-            <td>Latest Apple model</td>
-            <td>2</td>
-            <td>179998</td>
+            <td>{{ sale.sale_id }}</td>
+            <td>{{ sale.sale_date }}</td>
+            <td>{{ sale.name }}</td>
+            <td>{{ sale.description }}</td>
+            <td>{{ sale.quantity }}</td>
+            <td>{{ sale.total_cost }}</td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}

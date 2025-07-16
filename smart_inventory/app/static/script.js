@@ -140,3 +140,9 @@ window.onclick = function(event) {
         closeRestockModal();
     }
 }
+
+
+// Export CSV
+function exportSalesToCSV() {
+    window.location.href = '/export_sales';
+}

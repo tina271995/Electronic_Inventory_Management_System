@@ -153,6 +153,31 @@ body {
     position: relative; /* Ensure dropdown is positioned relative to this */
 }
 
+.logout-btn {
+    width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    background: var(--primary-color); /* Remove default button background */
+    border: var(--primary-dark); /* Remove default button border */
+    cursor: pointer; /* Change cursor to pointer */
+    font-size: 1rem; /* Adjust font size */
+    display: flex; /* Flexbox for icon alignment */
+    align-items: center; /* Center icon vertically */
+    justify-content: center;
+}
+
+.logout-btn i {
+    margin-right: 0.5rem;
+    /* margin-left: 0.8rem; Space between icon and text */
+}
+
+.logout-btn:hover {
+    color: var(--danger-color);
+    text-decoration: underline; /* Optional: underline on hover */
+}
+/* 
 .user-avatar {
     height: 36px;
     width: 36px;
@@ -168,20 +193,20 @@ body {
 .dropdown-menu {
     position: absolute;
     top: 100%; /* Position it below the user avatar */
-    right: 0; /* Align it to the right */
-    background-color: white;
+    /* right: 0; Align it to the right */
+    /* background-color: white;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 0.5rem 0;
     width: 200px;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease; */
     /* z-index: 100; Ensure it appears above other elements */
 
-}
+/* } */
 
-.dropdown-menu.active {
+/* .dropdown-menu.active {
     opacity: 1;
     visibility: visible;
 }
@@ -201,11 +226,11 @@ body {
     height: 1px;
     background-color: #e5e7eb;
     margin: 0.25rem 0;
-}
+} */ 
 
-.logout-btn {
+/* .logout-btn {
     color: var(--danger-color);
-}
+} */
 
 /*notifications section
 .notifications {
@@ -452,20 +477,20 @@ body {
 
 
 /* Add Product Form Styles */
-#addProductForm, #sellProductForm, #restockFormSection {
+#addProductForm {
     margin-top: 20px;
 }
 
-#addProductForm div, #sellProductForm div, #restockFormSection div {
+#addProductForm div {
     margin-bottom: 10px;
 }
 
-#addProductForm label, #sellProductForm label, #restockFormSection label {
+#addProductForm label {
     display: block;
     margin-bottom: 5px;
 }
 
-#addProductForm input, #addProductForm textarea, #sellProductForm input, #sellProductForm textarea, #restockFormSection input, #restockFormSection textarea {
+#addProductForm input, #addProductForm textarea {
     width: 100%;
     padding: 0.5rem;
     border-radius: 6px;
@@ -489,7 +514,7 @@ body {
 .product-table td {
     padding: 10px;
     border: 1px solid #ccc;
-    text-align: left;
+    text-align: center;
     font-size: 0.9rem;
 }
 
@@ -497,11 +522,11 @@ body {
     background-color: #e5e7eb;
 }
 
-.small-btn {
+/* .small-btn {
     padding: 6px 12px;
     font-size: 0.8rem;
     margin-right: 5px;
-}
+} */
 
 
 

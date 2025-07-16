@@ -29,27 +29,12 @@
                 <td>₹89,999</td>
                 <td>
                     <!-- <button class="ok-button small-btn sell-btn" onclick="openSellForm()">Sell</button> -->
-                    <button class="ok-button small-btn" onclick="openRestockForm()">Restock</button>
+                    <button class="ok-button" onclick="openRestockForm()">Restock</button>
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
-
-<!-- Sell Modal -->
-<!-- <div id="sellModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeSellModal()">&times;</span>
-        <h2>Sell Product</h2>
-        <form id="sellForm">
-            <input type="hidden" id="sellProductId" name="productId">
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" required>
-            <button type="button" onclick="confirmSale()">Confirm</button>
-            <button type="button" class="ok-button" onclick="generateBill()">Generate Bill</button>
-        </form>
-    </div>
-</div> -->
 
 <!-- Restock Modal -->
 <div id="restockModal" class="modal">
@@ -65,27 +50,5 @@
         </form>
     </div>
 </div>
-
-<!-- Sale Bill View -->
-<!-- <div id="saleBillSection">
-    <h2>Invoice</h2>
-    <table class="product-table">
-        <tbody>
-            <tr><th>Product ID</th><td id="billProductId"></td></tr>
-            <tr><th>Manufacture Date</th><td id="billManufactureDate"></td></tr>
-            <tr><th>Sale ID</th><td id="billSaleId"></td></tr>
-            <tr><th>Selling Date</th><td id="billSaleDate"></td></tr>
-            <tr><th>Name</th><td id="billProductName"></td></tr>
-            <tr><th>Description</th><td id="billDescription"></td></tr>
-            <tr><th>Quantity</th><td id="billQuantity"></td></tr>
-            <tr><th>Total Cost (₹)</th><td id="billTotalCost"></td></tr>
-        </tbody>
-    </table>
-    <button class="ok-button" onclick="downloadBillPDF()">Download Bill PDF</button>
-</div> -->
-
-<!-- <script>
-
-</script> -->
 
 {% endblock %}

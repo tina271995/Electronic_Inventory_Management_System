@@ -10,18 +10,39 @@
     </div> -->
 
     <div class="user-menu">
-        <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-        <div class="dropdown-menu" id="userDropdown">
-            <div class="dropdown-item">
+        <!-- <div class="user-avatar" onclick="toggleDropdown()">TS</div> -->
+        <!-- <div class="dropdown-menu" id="userDropdown" style="display: none;"> -->
+            <!-- <div class="dropdown-item">
                 <i class="fas fa-user-circle"></i> Profile
             </div>
             <div class="dropdown-item">
                 <i class="fas fa-cog"></i> Settings
             </div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item logout-btn" onclick="logout()">
+            <div class="dropdown-divider"></div> -->
+            <form action="{{ url_for('logout') }}" method="post">
+                <button class="logout-btn" type="submit" class="dropdown-item logout-btn">
                 <i class="fas fa-sign-out-alt"></i> Logout
-            </div>
-        </div>
+                </button>
+            </form>
+        <!-- </div> -->
     </div>
 </nav>
+
+<!-- <script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.user-avatar')) {
+            const dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.style.display === 'block') {
+                    openDropdown.style.display = 'none';
+                }
+            }
+        }
+    }
+</script> -->
