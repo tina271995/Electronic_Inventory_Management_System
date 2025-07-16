@@ -147,16 +147,19 @@
                     </thead>
                     <tbody id="InventorySectionBody">
                         {% for product in products %}
+                        {% if product.quantity_sold is not none and product.restock is not none %}
                         <tr>
                             <td>{{ product.id }}</td>
                             <td>{{ product.product_id }}</td>
                             <td>{{ product.quantity_sold }}</td>
                             <td>{{ product.restock }}</td>
-                            <td>₹{{ product.timestamp_sold }}</td>
-                            <td>₹{{ product.timestamp_restock }}</td>
+                            <td>{{ product.timestamp_sold }}</td>
+                            <td>{{ product.timestamp_restock }}</td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
+
 
                 </table>
             </div>
