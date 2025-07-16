@@ -141,6 +141,7 @@ async def login_form(
         db.commit()
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
+
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
             return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
@@ -176,8 +177,13 @@ async def add_product(
     user = db.query(Registration).filter(Registration.id == user_id).first()
     
     if not user:
+
         raise HTTPException(status_code=404, detail="User not found")
 
+    product = db.query(Product).filter(Product.product_name == ProductName).first()
+    print("Product",product)
+    if product:
+        return "Product Already Present"
     products = db.query(Product).all()
     new_product = Product(
         product_name=ProductName,
@@ -191,6 +197,7 @@ async def add_product(
     db.refresh(new_product)
     
     last_ele = db.query(Product).order_by(Product.id.desc()).first()
+    print(last_ele.id,"Hello Statement")
     Inventory_Record = InventoryRecord(
         product_id = last_ele.id,
         quantity_sold=None,
@@ -198,6 +205,7 @@ async def add_product(
         timestamp_sold=None,
         timestamp_restock=None
     )
+    
 
     db.add(Inventory_Record)
     db.commit()
