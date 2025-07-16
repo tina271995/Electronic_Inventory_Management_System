@@ -63,8 +63,9 @@ async def sales_reports(request: Request):
     return templates.TemplateResponse("diksha_sales_reports.html", {"request": request})
 
 @app.get("/InventoryRecords", response_class=HTMLResponse)
-async def inventory_reports(request: Request):
-    return templates.TemplateResponse("diksha_inventory_reports.html", {"request": request})
+async def inventory_reports(request: Request,db: Session = Depends(get_db)):
+    products = db.query(Product).all()
+    return templates.TemplateResponse("diksha_inventory_reports.html", {"request": request,"products": products})
 
 #Setting the Defult Root
 @app.get("/", response_class=HTMLResponse)
@@ -123,7 +124,6 @@ async def login_form(
 ):
     
     user = db.query(Registration).filter(Registration.Email == email).first()
-    print(user.Role)
     products = db.query(Product).all()
     # ✅ Verify password using bcrypt
     if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
