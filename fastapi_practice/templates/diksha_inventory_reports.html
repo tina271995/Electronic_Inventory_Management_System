@@ -103,6 +103,12 @@
                     <span>Inventory Reports</span>
                 </a>
             </li>
+            <li class="menu-item" id="inventory-reports">
+                <a href="http://127.0.0.1:8000/ProductRecords">
+                    <span class="icon"><i class="fas fa-archive"></i></span>
+                    <span>Product Reports</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
@@ -125,7 +131,7 @@
         <!-- Products in Warehouse Report -->
         <div class="card">
             <div class="card-header">
-                <h2>Products in Warehouse</h2><br>
+                <h2>Inventory Warehouse</h2><br>
             </div>
             <div class="card-body">
                 <table class="table table-striped">
@@ -133,19 +139,21 @@
                         <tr>
                             <th>Product ID</th>
                             <th>Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price (.Rs)</th>
+                            <th>Quantity Sold</th>
+                            <th>Restock</th>
+                            <th>Time Stamp Sold</th>
+                            <th>Time Stamp Restock</th>
                         </tr>
                     </thead>
                     <tbody id="InventorySectionBody">
                         {% for product in products %}
                         <tr>
                             <td>{{ product.id }}</td>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>₹{{ product.price }}</td>
+                            <td>{{ product.product_id }}</td>
+                            <td>{{ product.quantity_sold }}</td>
+                            <td>{{ product.restock }}</td>
+                            <td>₹{{ product.timestamp_sold }}</td>
+                            <td>₹{{ product.timestamp_restock }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -64,8 +64,13 @@ async def sales_reports(request: Request):
 
 @app.get("/InventoryRecords", response_class=HTMLResponse)
 async def inventory_reports(request: Request,db: Session = Depends(get_db)):
-    products = db.query(Product).all()
+    products = db.query(InventoryRecord).all()
     return templates.TemplateResponse("diksha_inventory_reports.html", {"request": request,"products": products})
+
+@app.get("/ProductRecords", response_class=HTMLResponse)
+async def Product_reports(request: Request,db: Session = Depends(get_db)):
+    products = db.query(Product).all()
+    return templates.TemplateResponse("diksha_Product_reports.html", {"request": request,"products": products})
 
 #Setting the Defult Root
 @app.get("/", response_class=HTMLResponse)
