@@ -129,8 +129,11 @@ async def login_form(
 ):
     
     user = db.query(Registration).filter(Registration.Email == email).first()
+    LowQuantity = db.query(Product).filter(Product.quantity < 11).all()
+
+    Low = len(LowQuantity)
     products = db.query(Product).all()
-    # ✅ Verify password using bcrypt
+    TotalProducs = len(products)
     if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
         login = Login(
             RegistrationID=user.id,
@@ -144,7 +147,7 @@ async def login_form(
 
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
-            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
+            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
 
