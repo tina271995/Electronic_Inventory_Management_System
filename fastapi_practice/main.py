@@ -57,7 +57,6 @@ async def Dashboards(request: Request):
 async def sales_history(request: Request):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
 
-
 @app.get("/sales-reports", response_class=HTMLResponse)
 async def sales_reports(request: Request):
     db = SessionLocal()
@@ -130,6 +129,17 @@ async def register(
     db.refresh(registration)
 
     return templates.TemplateResponse(request=request, name="login.html")
+
+@app.get("/get-username", response_class=HTMLResponse)
+async def get_username(email: str, db: Session = Depends(get_db)):
+    # Query the Registration table for the user with the provided email
+    user = db.query(Registration).filter(Registration.Email == email).first()
+    
+    if user:
+        return {"username": user.Username}  # Assuming you have a Username field in your Registration model
+    else:
+        raise HTTPException(status_code=404, detail="User  not found")
+
 
 @app.post("/loginuser", response_class=HTMLResponse)
 async def login_form(

@@ -25,44 +25,20 @@
 <body>
       <!-- Navbar -->
       <nav class="navbar">
-            <div class="navbar-brand">
-                  <div class="brand-logo">SIM</div>
-                  <span class="brand-name">Smart Inventory Management</span>
-            </div>
-
-            <div class="user-menu">
-                  <!-- <div class="notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                  </div> -->
-                  <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-                  <!-- </div> -->
-
-                  <div class="dropdown-menu" id="userDropdown">
-                        <div class="dropdown-item">
-                              <i class="fas fa-user-circle"></i> Profile
-                        </div>
-                        <div class="dropdown-item">
-                              <i class="fas fa-cog"></i> Settings
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-item logout-btn" onclick="logout()">
-                              <i class="fas fa-sign-out-alt"></i> Logout
-                        </div>
-                  </div>
-            </div>
-      </nav>
+        <div class="navbar-brand">
+            <div class="brand-logo">SIM</div>
+            <span class="brand-name">Smart Inventory Management</span>
+        </div>
+       
+        <div class="user-menu">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
 
       <!-- Sidebar -->
       <aside class="sidebar">
-            <div class="sidebar-header">
-                  <div class="user-avatar">TS</div>
-                  <div class="user-info">
-                        <h4>Tanvi Shirsat</h4>
-                        <p>Staff Member</p>
-                  </div>
-            </div>
-
             <ul class="sidebar-menu">
                   <div class="menu-title">Inventory</div>
                   <li class="menu-item" id="dashboard">

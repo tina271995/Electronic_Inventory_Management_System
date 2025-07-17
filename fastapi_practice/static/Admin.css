@@ -145,10 +145,6 @@ body {
     margin: 0.25rem 0;
 }
 
-.logout-btn {
-    color: var(--danger-color);
-}
-
 .notifications {
     position: relative;
     cursor: pointer;
@@ -326,6 +322,25 @@ body {
     gap: 1.5rem;
 }
 
+/* Logout button*/
+.logout-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    /* display: flex;
+    flex-direction: row; */
+    align-items: center;
+    gap: 8px;
+    /* font-size: 1rem; */
+    /* Add some space above the button */
+}
+
+.logout-btn:hover {
+    background-color: var(--primary-dark);
+}
 /* Modal Styles */
 .modal {
     display: none;
