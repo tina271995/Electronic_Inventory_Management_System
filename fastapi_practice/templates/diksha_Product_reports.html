@@ -30,19 +30,8 @@
             <span class="brand-name">Smart Inventory Management</span>
         </div>
 
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search products...">
-        </div>
-
         <div class="user-menu">
-            <!-- <div class="notifications">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </div> -->
             <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-            <!-- </div> -->
-
             <div class="dropdown-menu" id="userDropdown">
                 <div class="dropdown-item">
                     <i class="fas fa-user-circle"></i> Profile
@@ -70,7 +59,7 @@
 
        <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
-            <li class="menu-item active" id="dashboard">
+            <li class="menu-item" id="dashboard">
                 <a href="http://127.0.0.1:8000/Dashboards">
                     <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                     <span>Dashboard</span>
@@ -103,9 +92,9 @@
                 <span>Inventory Reports</span>
                 </a>
             </li>
-            <li class="menu-item" id="inventory-reports">
+            <li class="menu-item active" id="products-reports">
                 <a href="http://127.0.0.1:8000/ProductRecords">
-                    <span class="icon"><i class="fas fa-archive"></i></span>
+                    <span class="icon"><i class="fas fa-box-open"></i></span>
                 <span>Product Reports</span>
                 </a>
             </li>
@@ -118,49 +107,41 @@
             <div class="page-header">
                 <div class="header-content">
                     <div id="InventorySection">
-                        <h2>Product Report</h2>
+                        <h2>Products Report</h2>
                     </div>
                 </div>
                 <div class="export-button">
-                    <button class="ok-button" onclick="exportSalesToCSV()">Export Inventory Report</button>
+                    <button class="ok-button" onclick="exportSalesToCSV2()">Export Product Report</button>
                 </div>
 
             </div>
         </div>
 
         <!-- Products in Warehouse Report -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Products in Warehouse</h2><br>
-            </div>
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Product ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price (.Rs)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="InventorySectionBody">
-                        {% for product in products %}
-                        <tr>
-                            <td>{{ product.id }}</td>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>₹{{ product.price }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price (.Rs)</th>
+                </tr>
+            </thead>
+            <tbody id="ProductSectionBody">
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
 
-                </table>
-            </div>
-        </div>
+        </table>
     </main>
-
 
 
 </body>

@@ -26,12 +26,7 @@
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-        
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search products...">
-        </div>
-        
+       
         <div class="user-menu">
             <!-- <div class="notifications">
                 <i class="fas fa-bell"></i>
@@ -67,7 +62,7 @@
         
           <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
-            <li class="menu-item active" id="dashboard">
+            <li class="menu-item" id="dashboard">
                 <a href="http://127.0.0.1:8000/Dashboards">
                     <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                     <span>Dashboard</span>
@@ -75,7 +70,7 @@
             </li>
             
             <div class="menu-title">Sales</div>
-            <li class="menu-item" id="sales-history">
+            <li class="menu-item active" id="sales-history">
                 <a href="http://127.0.0.1:8000/sales-history">
                     <span class="icon"><i class="fas fa-history"></i></span>
                 <span>Sales History</span>
@@ -100,9 +95,9 @@
                 <span>Inventory Reports</span>
                 </a>
             </li>
-            <li class="menu-item" id="inventory-reports">
+            <li class="menu-item" id="products-reports">
                 <a href="http://127.0.0.1:8000/ProductRecords">
-                    <span class="icon"><i class="fas fa-archive"></i></span>
+                    <span class="icon"><i class="fas fa-box-open"></i></span>
                 <span>Product Reports</span>
                 </a>
             </li>
@@ -131,7 +126,7 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Quantity</th>
-                        <th>Total Cost</th>
+                        <th>Total Cost (.Rs)</th>
                     </tr>
                 </thead>
                 <tbody id="salesHistoryBody">
