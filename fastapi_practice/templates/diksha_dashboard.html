@@ -94,11 +94,10 @@
         <!-- Dashboard Cards -->
         
         <div class="card-grid">
-            {% for product in product_summary %} 
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 <h3>Total Products</h3>
                 <i class="bi bi-box-seam" style="font-size: 3rem; align-items: end;"></i>
-                <p>250</p>
+                <p>{{ total_products }}</p>
             </div>
             
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
@@ -109,15 +108,13 @@
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 <h3>Total Sales</h3>
                 <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
-                <p>5 Items</p>
+                <p>{{ items }} Items</p>
             </div>
             <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                
                 <h3>Total Revenue</h3>
                 <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
-                <p>₹{{ "%.2f"|format(product.total_sales) }}</p>
+                <p>₹{{ total_sales }}</p>
             </div>
-            {% endfor %}
         </div>
         <!-- Charts Row -->
         <div class="row my-4">

@@ -236,3 +236,4 @@ function exportToPDF() {
         excludeElements.forEach(el => el.style.display = '');
     });
 }
+

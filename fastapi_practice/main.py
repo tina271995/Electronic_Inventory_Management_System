@@ -50,7 +50,7 @@ def healthcheck():
     return check_db_connection()
 #}
 
-@app.get("/Dashboards", response_class=HTMLResponse)
+@app.get("/Dashboards", response_class=HTMLResponse) 
 async def Dashboards(request: Request):
     return templates.TemplateResponse("diksha_dashboard.html", {"request": request})
 @app.get("/sales-history", response_class=HTMLResponse)
@@ -129,17 +129,6 @@ async def register(
     db.refresh(registration)
 
     return templates.TemplateResponse(request=request, name="login.html")
-
-@app.get("/get-username", response_class=HTMLResponse)
-async def get_username(email: str, db: Session = Depends(get_db)):
-    # Query the Registration table for the user with the provided email
-    user = db.query(Registration).filter(Registration.Email == email).first()
-    
-    if user:
-        return {"username": user.Username}  # Assuming you have a Username field in your Registration model
-    else:
-        raise HTTPException(status_code=404, detail="User  not found")
-
 
 @app.post("/loginuser", response_class=HTMLResponse)
 async def login_form(
