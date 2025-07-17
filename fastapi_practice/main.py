@@ -13,9 +13,9 @@ from sqlalchemy.orm import Session
 from database import *
 import bcrypt
 from model import InventoryRecord, Registration, Login,Product, SaleTransaction
-import datetime
 from pydantic import BaseModel
 import setup_db
+from fastapi import Body
 
 ##Calling the FastAPI creating an insance app
 app = FastAPI()
@@ -154,6 +154,7 @@ async def login_form(
 
     Low = len(LowQuantity)
     products = db.query(Product).all()
+    SaleTransactions = db.query(SaleTransaction).all()
     TotalProducs = len(products)
     if user and bcrypt.checkpw(password.encode('utf-8'), user.Password.encode('utf-8')):
         login = Login(
@@ -167,7 +168,7 @@ async def login_form(
         if user.Role:
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
-            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low})
+            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
 
@@ -233,3 +234,143 @@ async def add_product(
     })
 
 
+
+@app.get("/sell_products", response_class=HTMLResponse)
+async def sell_products(request: Request, db: Session = Depends(get_db)):
+    
+    
+    products = db.query(Product).filter(Product.quantity > 0).all()
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "sellable_products": products
+        }
+    )
+
+
+class InvoiceData(BaseModel):
+    product_id: int
+    user: str
+    quantity_sold: int
+    product_amt: int
+
+@app.post("/save_invoice/")
+async def save_invoice(data: InvoiceData = Body(...), db: Session = Depends(get_db)):
+    sale = SaleTransaction(
+        product_id=data.product_id,
+        user=data.user,
+        quantity_sold=data.quantity_sold,
+        product_amt=data.product_amt,
+        # timestamp_sold=datetime.now()
+    )
+   
+    db.add(sale)
+    db.flush()  # Ensures the insert happens before querying product
+    Inventory_Record = InventoryRecord(
+        product_id = data.product_id,
+        quantity_sold=data.quantity_sold,
+        restock=0
+    )
+
+    db.add(Inventory_Record)
+    db.commit()
+    db.refresh(Inventory_Record)
+
+    # Optional: update product quantity
+    product = db.query(Product).filter(Product.id == data.product_id).first()
+    if product:
+        product.quantity -= data.quantity_sold
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if product.quantity < data.quantity_sold:
+        raise HTTPException(status_code=400, detail="Not enough stock")
+
+
+    db.commit()
+    return {"message": "Invoice saved successfully"}
+
+
+@app.get("/restock_products", response_class=HTMLResponse)
+async def restock_products(request: Request, db: Session = Depends(get_db)):
+    
+    restock = db.query(Product).filter(Product.quantity < Product.restock_threshold).all()  
+    
+    restock_product = InventoryRecord(
+        product_id = restock.id,
+        restock = True,
+        quantity_sold = restock.quantity
+    )
+    db.add(restock_product)
+    db.commit()
+    # db.refresh(restock_product)
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "restockable_products": restock
+        }
+    )
+
+class RestockData(BaseModel):
+    product_id: int
+    quantity:int
+@app.post("/save_restock/")
+async def save_restock(data: RestockData, db: Session = Depends(get_db)):
+    restock_entry = InventoryRecord(
+        product_id=data.product_id,
+        quantity_sold = data.quantity,
+        restock=True
+    )
+    db.add(restock_entry)
+    db.commit()
+    db.refresh(restock_entry)
+    product = db.query(Product).filter(Product.id == data.product_id).first()
+    if product:
+        product.quantity += data.quantity
+    # if not product:
+    #     raise HTTPException(status_code=404, detail="Product not found")
+    # if product.quantity < data.quantity_sold:
+    #     raise HTTPException(status_code=400, detail="Not enough stock")
+
+
+    db.commit()
+    return {"message": "Restock successful", "id": restock_entry.id}
+
+@app.get("/sale_history", response_class=HTMLResponse)
+async def sale_history(request: Request, db: Session = Depends(get_db)):
+    
+    sale_history = db.query(SaleTransaction).all()
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "sale_history": sale_history
+        }
+    )
+    
+@app.get("/get_sales_history/")
+async def get_sales_history(request: Request, db: Session = Depends(get_db)):
+    try:
+        # Get all sales with related product information
+        sales = db.query(SaleTransaction)\
+            .join(Product)\
+            .options(joinedload(SaleTransaction.product))\
+            .all()
+            
+        # Convert to JSON serializable format
+        sales_data = []
+        for sale in sales:
+            sales_data.append({
+                "id": sale.id,
+                "timestamp_sold": sale.timestamp_sold.strftime("%Y-%m-%d"),
+                "quantity_sold": sale.quantity_sold,
+                "product_amt": sale.product_amt,
+                "product": {
+                    "product_name": sale.product.product_name,
+                    "description": sale.product.description
+                }
+            })
+        return sales_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
