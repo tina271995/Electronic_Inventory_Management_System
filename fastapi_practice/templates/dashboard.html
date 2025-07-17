@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Inventory - Staff Dashboard</title>
-    <!-- Add to support PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -16,6 +16,10 @@
             --light-color: #f9fafb;
             --gray-color: #6b7280;
             --danger-color: #ef4444;
+        }
+
+        .displayNoneSellProducts {
+            display: none;
         }
 
         * {
@@ -701,28 +705,19 @@
 </head>
 
 <body>
-    <!-- Navbar -->
+
     <nav class="navbar">
         <div class="navbar-brand">
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-<!-- 
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search products...">
-        </div> -->
 
         <div class="user-menu">
-            <!-- <div class="notifications">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </div> -->
+
             <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-            <!-- </div> -->
 
             <div class="dropdown-menu" id="userDropdown">
-          
+
                 <div class="dropdown-divider"></div>
                 <div class="dropdown-item logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
@@ -733,7 +728,7 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        
+
 
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
@@ -741,7 +736,7 @@
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </li>
-       
+
             <form></form>
             <li class="menu-item" id="viewProductsMenu">
                 <i class="fas fa-boxes"></i>
@@ -781,7 +776,7 @@
                 <div class="header-content">
                     <h1 class="page-title">Dashboard</h1>
                 </div>
-                
+
             </div>
 
             <!-- Dashboard Cards -->
@@ -798,7 +793,7 @@
                     <h3>Low Stock Alerts</h3>
                     <p>{{ LowInQuantity }} Items</p>
                 </div>
-                
+
             </div>
 
             <!-- Recent Activities -->
@@ -814,32 +809,14 @@
             </div>
         </div>
 
-        <!-- <h1 class="page-title">Dashboard</h1> -->
-        <!-- <button class="ok-button" id="quickAddButton">
-                <i class="fas fa-plus"></i> Quick Add
-            </button> -->
-        <!-- </div> -->
+
         <div class="dashboard-content">
-            <!-- <h1 class="page-title">Dashboard</h1>
-            <button class="ok-button" id="quickAddButton">
-                <i class="fas fa-plus"></i> Quick Add
-            </button> -->
-            <!-- Dashboard widgets will go here -->
+
         </div>
 
         <!-- Add Product Form -->
         <div id="addProductForm" style="display: none;">
             <h2>Add Product</h2>
-            <!-- <form method="post" action="http://127.0.0.1:8000/products/">
-                <input type="hidden" name="user_id" value="1">
-
-                <input type="text" name="ProductName" required>
-                <textarea name="productDesc" required></textarea>
-                <input type="number" name="quantity" required>
-                <input type="number" name="price" required>
-
-                <button type="submit">Submit</button>
-            </form> -->
             <form id="productForm" method="post" action="http://127.0.0.1:8000/products/">
                 <input type="hidden" name="user_id" value="1"> <!-- Replace with actual logged-in user ID -->
 
@@ -865,8 +842,7 @@
             </form>
 
         </div>
-        <!-- Add this section inside <main class="main-content"> after existing sections like #dashboardContent and #addProductForm -->
-        <!-- View Products Section -->
+
         <div id="viewProductsSection" style="display: none;">
             <h2>View Products</h2>
             <table class="product-table">
@@ -882,51 +858,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Example product row -->
+                    {% for product in products %}
                     <tr>
-                        <td>101</td>
-                        <td>2025-07-13</td>
-                        <td>iPhone 15</td>
-                        <td>Latest Apple model</td>
-                        <td>10</td>
-                        <td>₹89,999</td>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.TimeStamp.strftime('%Y-%m-%d') if product.TimeStamp else "—" }}</td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>₹{{ "{:,}".format(product.price) }}</td>
                         <td>
-                            <!-- <button class="ok-button small-btn">Sell</button> -->
                             <button class="ok-button small-btn"
-                                onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
-                            <!-- <button class="ok-button small-btn">Restock</button> -->
-                            <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
-
+                                onclick="openSellForm('{{ product.id }}','{{ product.product_name }}','{{ product.description }}','{{ product.price }}')">Sell</button>
+                            <button class="ok-button small-btn"
+                                onclick="openRestockForm('{{ product.id }}')">Restock</button>
                         </td>
                     </tr>
-                    <!-- Add more rows dynamically from JS/server if needed -->
+                    {% endfor %}
                 </tbody>
             </table>
+
         </div>
 
         <!-- Sell Product Form -->
         <div id="sellProductForm" style="display: none;">
             <h2>Sell Product</h2>
             <form id="sellForm">
-                <div>
+                <div class="displayNoneSellProducts">
                     <label>Product ID:</label>
                     <input type="text" id="sellProductId" readonly>
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label>Manufacture Date:</label>
                     <input type="date" id="manufactureDate">
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label>Product Name:</label>
                     <input type="text" id="sellProductName" readonly>
-                </div>
-                <div>
+                </div class="displayNoneSellProducts">
+                <div class="displayNoneSellProducts">
                     <label>Description:</label>
                     <textarea id="sellDescription" rows="3" readonly></textarea>
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label>Price (₹):</label>
                     <input type="number" id="sellPrice" readonly>
+                </div>
+                <div>
+                    <label>Buyer:</label>
+                    <input type="text" id="BuyersName">
                 </div>
                 <div>
                     <label>Quantity:</label>
@@ -936,7 +915,8 @@
                     <label>Total Cost (₹):</label>
                     <input type="text" id="totalCost" readonly>
                 </div>
-                <button type="button" class="ok-button" onclick="generateBill()">Generate Bill</button>
+
+                <button type="button" class="ok-button" onclick="generateBill()">Generate Bill and Sell</button>
                 <button type="button" class="ok-button" onclick="cancelSell()">Cancel</button>
             </form>
         </div>
@@ -980,25 +960,25 @@
 
         <!-- Restock Form Section -->
         <div id="restockFormSection" style="display: none;">
-            <h2>Restock Product</h2>
+            <h2 class="mx-1">Restock Product</h2>
             <form id="restockForm">
-                <div>
+                <div class="displayNoneSellProducts">
                     <label for="restockProductId">Product ID:</label>
                     <input type="text" id="restockProductId" readonly>
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label for="restockProductName">Product Name:</label>
                     <input type="text" id="restockProductName" readonly>
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label for="restockProductDesc">Product Description:</label>
                     <textarea id="restockProductDesc" rows="3" readonly></textarea>
                 </div>
-                <div>
+                <div class="mx-1">
                     <label for="restockQuantity">Quantity to Add:</label>
                     <input type="number" id="restockQuantity" required>
                 </div>
-                <div>
+                <div class="displayNoneSellProducts">
                     <label for="restockPrice">New Price:</label>
                     <input type="number" id="restockPrice" required>
                 </div>
@@ -1020,13 +1000,17 @@
                         <th>Product ID</th>
                         <td id="billProductId"></td>
                     </tr>
-                    <tr>
+                    <tr class="displayNoneSellProducts">
                         <th>Manufacture Date</th>
                         <td id="billManufactureDate"></td>
                     </tr>
                     <tr>
                         <th>Sale ID</th>
                         <td id="billSaleId"></td>
+                    </tr>
+                    <tr>
+                        <th>Buyers Information</th>
+                        <td id="billBuyersName"></td>
                     </tr>
                     <tr>
                         <th>Selling Date</th>
@@ -1059,7 +1043,7 @@
             <div class="product-card-grid">
                 {% for product in products %}
                 <div class="product-card">
-                    
+
                     <p><strong>Product ID:</strong> {{ product.id }}</p>
                     <p><strong>Date:</strong> {{ product.TimeStamp.strftime('%Y-%m-%d') if product.TimeStamp else "—"
                         }}</p>
@@ -1120,26 +1104,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <!-- <footer class="footer">
-        <div class="copyright">
-            &copy; 2023 Smart Inventory Management System. All rights reserved.
-        </div>
-        
-        <div class="footer-links">
-            <a href="#" class="footer-link">Privacy Policy</a>
-            <a href="#" class="footer-link">Terms of Service</a>
-            <a href="#" class="footer-link">Help Center</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
-        </div>
-    </footer> -->
 
-    <!-- Modal for Alert -->
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <p id="alertMessage">This is an alert message!</p>
@@ -1174,14 +1139,8 @@
             }
         });
 
-        // Logout function
-        //function logout() {
-        //showAlert("You have successfully logged out.");
-        // alert('Logging out...');
-        // window.location.href = '/logout';
-        //}
 
-        // Static user data for demonstration
+
         const userData = {
             registrationID: 'USER-2023-04852',
             loginTimestamp: new Date().toISOString(),
@@ -1211,8 +1170,7 @@
             document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
         }
 
-        // Show the Add Product form
-        // document.querySelector('.menu-item:nth-child(4)').addEventListener('click', function() {
+
         document.getElementById('addProductMenu').addEventListener('click', function () {
             setActiveMenuItem('addProductMenu');
             document.getElementById('addProductForm').style.display = 'block';
@@ -1287,6 +1245,9 @@
         }
 
         function generateBill() {
+            
+            const BuyersName = document.getElementById('BuyersName').value;
+            console.log(BuyersName,"Buyers Information")
             const productId = document.getElementById('sellProductId').value;
             const name = document.getElementById('sellProductName').value;
             const desc = document.getElementById('sellDescription').value;
@@ -1295,6 +1256,7 @@
             const manufactureDate = document.getElementById('manufactureDate').value;
             const totalCost = document.getElementById('totalCost').value;
 
+            document.getElementById('billBuyersName').innerText = BuyersName;
             document.getElementById('billProductId').innerText = productId;
             document.getElementById('billManufactureDate').innerText = manufactureDate;
             document.getElementById('billSaleId').innerText = 'SALE' + Math.floor(Math.random() * 10000);
@@ -1319,11 +1281,10 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        // Restock The Product
         function openRestockForm(productId) {
-            // Dummy data (replace with actual logic/server data if available)
             const productName = "iPhone 16";
             const productDesc = "Latest Apple model";
+            
 
             document.getElementById('restockProductId').value = productId;
             document.getElementById('restockProductName').value = productName;
@@ -1334,7 +1295,6 @@
         }
 
         function generateRestock() {
-            // You can extend logic to send to server
             document.getElementById('restockFormSection').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'block';
         }
@@ -1345,8 +1305,6 @@
         }
 
 
-        // New code of Dashboard
-        // Show the Dashboard content
         document.getElementById('dashboardMenu').addEventListener('click', function () {
             setActiveMenuItem('dashboardMenu');
             document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
@@ -1389,56 +1347,7 @@
             document.body.removeChild(link);
         }
 
-        // // Save product function
-        // function saveProduct() {
-        //     const name = document.getElementById('productName').value;
-        //     const desc = document.getElementById('productDesc').value;
-        //     const quantity = document.getElementById('quantity').value;
-        //     const price = document.getElementById('price').value;
 
-        //     // Here you can add logic to save the product (e.g., send to server)
-        //     showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
-        //     cancelAddProduct(); // Hide form after saving
-        // }
-
-        // function saveProduct() {
-        //     const name = document.getElementById('productName').value;
-        //     const desc = document.getElementById('productDesc').value;
-        //     const quantity = document.getElementById('quantity').value;
-        //     const price = document.getElementById('price').value;
-
-        // // Show confirmation alert
-        //     const confirmation = confirm("Confirm to New product added");
-        //     if (confirmation) {
-        //         // Here you can add logic to save the product (e.g., send to server)
-        //         showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
-
-        // // Redirect to dashboard after a short delay
-        //         setTimeout(() => {
-        //             document.getElementById('addProductForm').style.display = 'none';
-        //             document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
-        //         }, 2000); // 2 seconds delay for the alert to be visible
-        //     }
-        // }
-
-
-        // function saveProduct() {
-        //     const name = document.getElementById('productName').value;
-        //     const desc = document.getElementById('productDesc').value;
-        //     const quantity = document.getElementById('quantity').value;
-        //     const price = document.getElementById('price').value;
-
-        //     // Show confirmation alert
-        //     const confirmation = confirm("Confirm to New product added");
-        //     if (confirmation) {
-        //         // Here you can add logic to save the product (e.g., send to server)
-        //         // showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
-
-        //         // Immediately redirect to dashboard
-        //         document.getElementById('addProductForm').style.display = 'none';
-        //         document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
-        //     }
-        // }
 
         function saveProduct() {
             const name = document.getElementById('productName').value;
@@ -1446,47 +1355,30 @@
             const quantity = document.getElementById('quantity').value;
             const price = document.getElementById('price').value;
 
-            // Show the confirmation modal
             document.getElementById("confirmationMessage").innerText = `Confirm to add ${name}?`;
             document.getElementById("confirmationModal").style.display = "block";
 
-            // Handle confirmation button clicks
             document.getElementById("confirmYesButton").onclick = function () {
-                // Here you can add logic to save the product (e.g., send to server)
-                // showAlert(`Product Saved: ${name}, Quantity: ${quantity}, Price: ${price}`);
 
-                // Hide the add product form and show the dashboard content
                 document.getElementById('addProductForm').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
 
-                // Close the confirmation modal
                 document.getElementById("confirmationModal").style.display = "none";
             };
 
             document.getElementById("confirmNoButton").onclick = function () {
-                // Close the confirmation modal without saving
                 document.getElementById("confirmationModal").style.display = "none";
             };
         }
 
 
-        // Cancel adding product
-        // function cancelAddProduct() {
-        //     document.getElementById('addProductForm').style.display = 'none';
-        //     document.querySelector('.dashboard-content').style.display = 'block'; // Show dashboard content
-        // }
 
         function cancelAddProduct() {
-            // Clear all input fields
             document.getElementById('productName').value = '';
             document.getElementById('productDesc').value = '';
             document.getElementById('quantity').value = '';
             document.getElementById('price').value = '';
-
-            // Show the form again if needed (keep it visible or hidden as per your flow)
             document.getElementById('addProductForm').style.display = 'block';
-
-            // Also hide dashboard content
             document.querySelector('.dashboard-content').style.display = 'none';
         }
 
