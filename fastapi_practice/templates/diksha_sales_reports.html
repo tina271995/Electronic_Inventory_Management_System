@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Reports - Smart Inventory</title>
     <!-- Add to support PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.10/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,15 +22,10 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar no-export">
         <div class="navbar-brand">
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
-        </div>
-        
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search products...">
         </div>
         
         <div class="user-menu">
@@ -56,7 +52,7 @@
     </nav>
 
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar no-export">
         <div class="sidebar-header">
             <div class="user-avatar">TS</div>
             <div class="user-info">
@@ -67,7 +63,7 @@
         
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
-            <li class="menu-item active" id="dashboard">
+            <li class="menu-item" id="dashboard">
                 <a href="http://127.0.0.1:8000/Dashboards">
                     <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
                     <span>Dashboard</span>
@@ -88,7 +84,7 @@
             </li> -->
             
             <div class="menu-title">Reports</div>
-            <li class="menu-item" id="sales-reports">
+            <li class="menu-item active" id="sales-reports">
                 <a href="http://127.0.0.1:8000/sales-reports">
                     <span class="icon"><i class="fas fa-chart-line"></i></span>
                 <span>Sales Reports</span>
@@ -100,9 +96,9 @@
                 <span>Inventory Reports</span>
                 </a>
             </li>
-            <li class="menu-item" id="inventory-reports">
+            <li class="menu-item" id="products-reports">
                 <a href="http://127.0.0.1:8000/ProductRecords">
-                    <span class="icon"><i class="fas fa-archive"></i></span>
+                    <span class="icon"><i class="fas fa-box-open"></i></span>
                 <span>Product Reports</span>
                 </a>
             </li>
@@ -110,7 +106,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="pdf-content">
         <div class="dashboardContent">
             <div class="page-header">
                 <div class="header-content">
@@ -118,8 +114,8 @@
                         <h2>Sales Report</h2>
                     </div>  
                 </div>
-                <div class="export-button">
-                    <button class="ok-button" onclick="downloadPDF()">Export Sales Report</button>
+                <div class="export-button no-export">
+                    <button class="ok-button" onclick="exportToPDF()">Export Sales Report</button>
                 </div>
             </div>
         </div>
@@ -127,27 +123,22 @@
         <!-- Sales Cards -->
         <div class="card-grid">
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Products</h3>
-                <i class="bi bi-box-seam" style="font-size: 3rem; align-items: end;"></i>
-                <p>250</p>
+                <h3>Top Product</h3>
+                <i class="fas fa-star" style="font-size: 3rem; align-items: end;"></i>
+                <p>{{ top_product }}</p>
             </div>
 
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Stock</h3>
-                <i class="bi bi-layers" style="font-size: 3rem; align-items: end;"></i>
-                <p>3,500</p>
+                <h3>Total Sales</h3>
+                <i class="fas fa-shopping-cart" style="font-size: 3rem; align-items: center;"></i>
+                <p>{{ total_orders }}</p>
             </div>
-            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
-                <h3>Total Orders</h3>
-                <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
-
-                <p>5 Items</p>
-            </div>
+           
             <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 
                 <h3>Total Revenue</h3>
-                <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
-                <p>₹5,40,000</p>
+                <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: center;"></i>
+                <p>{{ total_sales }}</p>
             </div>
         </div>
 
@@ -164,23 +155,23 @@
                     </div>
                 </div>
             </div> <br>
+            <div class="page-break"></div>
+            <div class="card-grid">
                 <div class="col-md-6">
-                    <div class="card h-100">
+                    <div class="card h-200">
                         <div class="card-header text-center">
                             <h4>Top Selling Products</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="topProductsBarChart" height="100"></canvas>
+                            <canvas id="topProductsBarChart" height="200"></canvas>
                         </div>
                     </div>
                 </div>
-            </div><br>
-
         <!-- Tables Row -->
         <div class="row my-5">
-            <div class="card-grid">
+            <div class="chart-grid">
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100"> <!-- Adjust height as needed -->
+                    <div class="card h-100 w-100"> <!-- Adjust height as needed -->
                         <div class="card-header text-center">
                             <h4>Low Stock Products</h4>
                         </div>
@@ -198,10 +189,10 @@
                         </div>
                     </div>
                 </div>
-               
+                    
             </div>
-        </div>
-        
+                </div>
+        </div><br>
 
     </main>
 

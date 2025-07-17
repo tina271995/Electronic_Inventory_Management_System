@@ -121,7 +121,6 @@ function toggleDropdown() {
     dropdown.classList.toggle("active");
 }
 
-
 // Function to set the active menu item
 function setActiveMenuItem() {
     const currentPath = window.location.pathname.split('/').pop(); // Get the current page name
@@ -137,6 +136,7 @@ function setActiveMenuItem() {
     });
 }
 
+// Sales History CSV
 function exportSalesToCSV1() {
     const rows = document.querySelectorAll("#salesHistoryBody tr");
     
@@ -168,11 +168,11 @@ function exportSalesToCSV1() {
     document.body.removeChild(link); // Clean up
 }
 
-
+// Inventory Report CSV
 function exportSalesToCSV() {
     const rows = document.querySelectorAll("#InventorySectionBody tr");
     
-    let csvContent = "Product ID,Name,Description,Quantity,Price\n"; // CSV header
+    let csvContent = "Product ID,Name,Quantity Sold,Restock,Time Stamp Sold,Time Stamp Restock\n"; // CSV header
 
     rows.forEach(row => {
         const cols = row.querySelectorAll("td");
@@ -192,4 +192,47 @@ function exportSalesToCSV() {
     document.body.appendChild(link);
     link.click(); // Trigger the download
     document.body.removeChild(link); // Clean up
+}
+
+// Product Report to CSV
+function exportSalesToCSV2() {
+    const rows = document.querySelectorAll("#ProductSectionBody tr");
+    
+    let csvContent = "Product ID,Name,Description,Quantity,Price (.Rs)\n"; // CSV header
+
+    rows.forEach(row => {
+        const cols = row.querySelectorAll("td");
+        const rowData = Array.from(cols).map(td => {
+            // Escape double quotes and wrap in quotes if necessary
+            const text = td.textContent.trim().replace(/"/g, '""');
+            return `"${text}"`; // Wrap in quotes to handle commas in data
+        }).join(",");
+        csvContent += rowData + "\n"; // Add row to CSV content
+    });
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "products_report.csv");
+    document.body.appendChild(link);
+    link.click(); // Trigger the download
+    document.body.removeChild(link); // Clean up
+}
+
+function exportToPDF() {
+    const element = document.getElementById('pdf-content');
+    const excludeElements = element.querySelectorAll('.no-export');
+    excludeElements.forEach(el => el.style.display = 'none');
+    
+    const opt = {
+        margin: 10,
+        filename: 'sales_report.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        excludeElements.forEach(el => el.style.display = '');
+    });
 }

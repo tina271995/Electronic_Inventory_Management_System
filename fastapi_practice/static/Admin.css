@@ -424,7 +424,6 @@ tr:hover {
     }
 }
 
-
 /* Footer Styles */
 /*.footer {
     grid-area: footer;
@@ -526,5 +525,26 @@ tr:hover {
     
     .main-content {
         padding-bottom: 80px;
+    }
+}
+
+@media print {
+    #pdf-content {
+        width: 100%!important;
+        margin: 0 auto!important;
+    }
+
+    #pdf-content canvas {
+        margin: 0 auto!important;
+        display: block!important;
+    }
+
+    .page-break {
+        page-break-before: always; /* For page breaks in print */
+        margin: 20px 0; /* Optional: Add some margin for spacing */
+    }
+
+    .pdf-space {
+        height: 50px;
     }
 }

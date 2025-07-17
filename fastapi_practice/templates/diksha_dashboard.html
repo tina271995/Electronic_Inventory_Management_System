@@ -28,12 +28,7 @@
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-        
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search products...">
-        </div>
-        
+    
         <div class="user-menu">
             <!-- <div class="notifications">
                 <i class="fas fa-bell"></i>
@@ -102,9 +97,9 @@
                 <span>Inventory Reports</span>
                 </a>
             </li>
-            <li class="menu-item" id="inventory-reports">
+            <li class="menu-item" id="products-reports">
                 <a href="http://127.0.0.1:8000/ProductRecords">
-                    <span class="icon"><i class="fas fa-archive"></i></span>
+                    <span class="icon"><i class="fas fa-box-open"></i></span>
                 <span>Product Reports</span>
                 </a>
             </li>
@@ -121,14 +116,15 @@
             </div>
         </div>
         <!-- Dashboard Cards -->
-
+        
         <div class="card-grid">
+            {% for product in product_summary %} 
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 <h3>Total Products</h3>
                 <i class="bi bi-box-seam" style="font-size: 3rem; align-items: end;"></i>
                 <p>250</p>
             </div>
-
+            
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 <h3>Total Stock</h3>
                 <i class="bi bi-layers" style="font-size: 3rem; align-items: end;"></i>
@@ -137,17 +133,16 @@
             <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 <h3>Total Sales</h3>
                 <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
-
                 <p>5 Items</p>
             </div>
             <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
                 
                 <h3>Total Revenue</h3>
                 <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
-                <p>₹5,40,000</p>
+                <p>₹{{ "%.2f"|format(product.total_sales) }}</p>
             </div>
+            {% endfor %}
         </div>
-
         <!-- Charts Row -->
         <div class="row my-4">
             <div class="col-md-12 mb-3">
@@ -186,26 +181,12 @@
             </div>
         </div>
     </main>
-
-
-  
+ 
     
     <!-- Footer -->
     <!-- <footer class="footer">
         <div class="copyright">
             &copy; 2023 Smart Inventory Management System. All rights reserved.
-        </div>
-        
-        <div class="footer-links">
-            <a href="#" class="footer-link">Privacy Policy</a>
-            <a href="#" class="footer-link">Terms of Service</a>
-            <a href="#" class="footer-link">Help Center</a>
-        </div>
-        
-        <div class="social-links">
-            <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
         </div>
     </footer> -->
 

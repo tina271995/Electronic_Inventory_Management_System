@@ -12,7 +12,7 @@ from fastapi import FastAPI,Request, Form,Depends
 from sqlalchemy.orm import Session
 from database import *
 import bcrypt
-from model import InventoryRecord, Registration, Login,Product
+from model import InventoryRecord, Registration, Login,Product, SaleTransaction
 import datetime
 from pydantic import BaseModel
 import setup_db
@@ -50,7 +50,6 @@ def healthcheck():
     return check_db_connection()
 #}
 
-
 @app.get("/Dashboards", response_class=HTMLResponse)
 async def Dashboards(request: Request):
     return templates.TemplateResponse("diksha_dashboard.html", {"request": request})
@@ -58,9 +57,21 @@ async def Dashboards(request: Request):
 async def sales_history(request: Request):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
 
+
 @app.get("/sales-reports", response_class=HTMLResponse)
 async def sales_reports(request: Request):
-    return templates.TemplateResponse("diksha_sales_reports.html", {"request": request})
+    db = SessionLocal()
+    total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
+    total_orders = db.query(func.count(SaleTransaction.id))
+    top_product = db.query(SaleTransaction.product, func.sum(SaleTransaction.quantity_sold).label("total"))\
+    .group_by(SaleTransaction.product).order_by(func.sum(SaleTransaction.quantity_sold).desc()).first()
+    monthly_data = db.query(func.date_format(SaleTransaction.timestamp_sold, "%b").label("month"),\
+                            func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold).label("total")).group_by("month").all()
+    labels = [m[0] for m in monthly_data]
+    sales_data = [float(m[1]) for m in monthly_data]
+    db.close()
+    return templates.TemplateResponse("diksha_sales_reports.html", {"request": request, "total_sales": total_sales, "total_orders": total_orders, \
+                                    "top_product":  top_product[0] if top_product else "N/A", "labels": labels, "sales_data": sales_data})
 
 @app.get("/InventoryRecords", response_class=HTMLResponse)
 async def inventory_reports(request: Request,db: Session = Depends(get_db)):
@@ -105,6 +116,7 @@ async def register(
     if confirm_password != password:
         return templates.TemplateResponse("register.html", {"request": request, "error": "⚠️ Passwords do not match."})
 
+
     # ✅ Hash password
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
@@ -118,7 +130,6 @@ async def register(
     db.refresh(registration)
 
     return templates.TemplateResponse(request=request, name="login.html")
-
 
 @app.post("/loginuser", response_class=HTMLResponse)
 async def login_form(
@@ -141,7 +152,6 @@ async def login_form(
         db.commit()
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
-
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
             return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products})
@@ -162,7 +172,6 @@ class ProductUpdate(BaseModel):
     quantity: int = None
 
 
-
 # Add product(Staff)
 @app.post("/products", response_class=HTMLResponse)
 async def add_product(
@@ -177,13 +186,8 @@ async def add_product(
     user = db.query(Registration).filter(Registration.id == user_id).first()
     
     if not user:
-
         raise HTTPException(status_code=404, detail="User not found")
 
-    product = db.query(Product).filter(Product.product_name == ProductName).first()
-    print("Product",product)
-    if product:
-        return "Product Already Present"
     products = db.query(Product).all()
     new_product = Product(
         product_name=ProductName,
@@ -197,7 +201,6 @@ async def add_product(
     db.refresh(new_product)
     
     last_ele = db.query(Product).order_by(Product.id.desc()).first()
-    print(last_ele.id,"Hello Statement")
     Inventory_Record = InventoryRecord(
         product_id = last_ele.id,
         quantity_sold=None,
@@ -205,7 +208,6 @@ async def add_product(
         timestamp_sold=None,
         timestamp_restock=None
     )
-    
 
     db.add(Inventory_Record)
     db.commit()
