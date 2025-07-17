@@ -713,17 +713,22 @@
         </div>
 
         <div class="user-menu">
-
-            <div class="user-avatar" onclick="toggleDropdown()">TS</div>
-
-            <div class="dropdown-menu" id="userDropdown">
-
-                <div class="dropdown-divider"></div>
-                <div class="dropdown-item logout-btn" onclick="logout()">
+            <form action="http://127.0.0.1:8000/" method="get">
+                <button class="logout-btn" style="
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem">
                     <i class="fas fa-sign-out-alt"></i> Logout
-                </div>
-            </div>
+                </button>
+            </form>
         </div>
+
     </nav>
 
     <!-- Sidebar -->
@@ -1067,30 +1072,32 @@
             </div>
 
             <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
-            <table class="product-table">
-                <thead>
-                    <tr>
-                        <th>Sale ID</th>
-                        <th>Sale Date</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Total Cost</th>
-                    </tr>
-                </thead>
-                <tbody id="salesHistoryBody">
-                    <!-- Example sale row -->
-                    <tr>
-                        <td>501</td>
-                        <td>2025-07-13</td>
-                        <td>iPhone 15</td>
-                        <td>Latest Apple model</td>
-                        <td>2</td>
-                        <td>179998</td>
-                    </tr>
-                    <!-- Add more rows dynamically as needed -->
-                </tbody>
-            </table>
+           <table class="product-table">
+    <thead>
+        <tr>
+            <th>Sale ID</th>
+            <th>Sale Date</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Total Cost</th>
+        </tr>
+    </thead>
+    <tbody id="salesHistoryBody">
+        {% for sale in SaleTransactions %}
+        <tr>
+            <td>{{ sale.id }}</td>
+            <td>{{ sale.timestamp_sold.strftime('%Y-%m-%d') if sale.timestamp_sold else "—" }}</td>
+            <td>{{ sale.product.product_name }}</td>
+            <td>{{ sale.product.description }}</td>
+            <td>{{ sale.quantity_sold }}</td>
+            <td>₹{{ "{:,}".format(sale.product_amt) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
         </div>
 
     </main>
@@ -1245,9 +1252,9 @@
         }
 
         function generateBill() {
-            
+
             const BuyersName = document.getElementById('BuyersName').value;
-            console.log(BuyersName,"Buyers Information")
+            console.log(BuyersName, "Buyers Information")
             const productId = document.getElementById('sellProductId').value;
             const name = document.getElementById('sellProductName').value;
             const desc = document.getElementById('sellDescription').value;
@@ -1268,6 +1275,28 @@
 
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'block';
+
+            const invoiceData = {
+                product_id: parseInt(document.getElementById('billProductId').innerText),
+                user: document.getElementById('billBuyersName').innerText,
+                quantity_sold: parseInt(document.getElementById('billQuantity').innerText),
+                product_amt: parseInt(document.getElementById('billTotalCost').innerText)
+            };
+            console.log(invoiceData, "invoiceData");
+
+            // Send data to FastAPI
+            fetch('/save_invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(invoiceData)
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Failed to save invoice');
+                }
+            });
+
         }
 
         function downloadBillPDF() {
@@ -1278,13 +1307,14 @@
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
+
             html2pdf().set(opt).from(element).save();
         }
 
         function openRestockForm(productId) {
             const productName = "iPhone 16";
             const productDesc = "Latest Apple model";
-            
+
 
             document.getElementById('restockProductId').value = productId;
             document.getElementById('restockProductName').value = productName;
@@ -1294,10 +1324,37 @@
             document.getElementById('restockFormSection').style.display = 'block';
         }
 
+
         function generateRestock() {
-            document.getElementById('restockFormSection').style.display = 'none';
-            document.getElementById('viewProductsSection').style.display = 'block';
+            const productId = document.getElementById('restockProductId').value;
+            const quantity = document.getElementById('restockQuantity').value;
+            console.log(quantity, "Heloooooooooooooooooo")
+
+            fetch('/save_restock/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: parseInt(productId),
+                    quantity: parseInt(quantity)
+                })
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Restock successful!');
+                        document.getElementById('restockFormSection').style.display = 'none';
+                        document.getElementById('viewProductsSection').style.display = 'block';
+                    } else {
+                        alert('Failed to restock.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
+
 
         function cancelRestock() {
             document.getElementById('restockFormSection').style.display = 'none';
