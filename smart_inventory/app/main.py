@@ -6,8 +6,8 @@ from fastapi.responses import FileResponse
 from datetime import datetime
 import csv
 import io
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+# from reportlab.lib.pagesizes import letter
+# from reportlab.pdfgen import canvas
 import os
 
 app = FastAPI()
