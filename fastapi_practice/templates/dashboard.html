@@ -765,7 +765,7 @@
                 <i class="fas fa-history"></i>
                 <span>Sales History</span>
             </li>
-            <li class="menu-item" id="salesHistoryMenu">
+            <li class="menu-item" id="inventoryHistoryMenu">
                 <i class="fas fa-history"></i>
                 <span>Inventory History</span>
             </li>
@@ -1072,30 +1072,64 @@
             </div>
 
             <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
-           <table class="product-table">
-    <thead>
-        <tr>
-            <th>Sale ID</th>
-            <th>Sale Date</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Total Cost</th>
-        </tr>
-    </thead>
-    <tbody id="salesHistoryBody">
-        {% for sale in SaleTransactions %}
-        <tr>
-            <td>{{ sale.id }}</td>
-            <td>{{ sale.timestamp_sold.strftime('%Y-%m-%d') if sale.timestamp_sold else "—" }}</td>
-            <td>{{ sale.product.product_name }}</td>
-            <td>{{ sale.product.description }}</td>
-            <td>{{ sale.quantity_sold }}</td>
-            <td>₹{{ "{:,}".format(sale.product_amt) }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Sale Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="salesHistoryBody">
+                    {% for sale in SaleTransactions %}
+                    <tr>
+                        <td>{{ sale.id }}</td>
+                        <td>{{ sale.timestamp_sold.strftime('%Y-%m-%d') if sale.timestamp_sold else "—" }}</td>
+                        <td>{{ sale.product.product_name }}</td>
+                        <td>{{ sale.product.description }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>₹{{ "{:,}".format(sale.product_amt) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="inventoryHistorySection" style="display: none;">
+            <h2>Inventory History</h2>
+            <!-- <div class="export-button">
+                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
+            </div> -->
+
+            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Inventory ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Restock</th>
+                        <th>Timestamp Restock</th>
+
+                    </tr>
+                </thead>
+                <tbody id="inventoryHistoryBody">
+                    {% for inventory in inventory_history %}
+                    <tr>
+                        <td>{{ inventory.id }}</td>
+                        <td>{{ inventory.product.product_name }}</td>
+                        <td>{{ inventory.quantity_sold }}</td>
+                        <td>{{ inventory.restock }}</td>
+                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—"
+                            }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
 
         </div>
@@ -1370,15 +1404,29 @@
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'none';
             document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
         });
-
+        document.getElementById('inventoryHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('inventoryHistoryMenu');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
         document.getElementById('salesHistoryMenu').addEventListener('click', function () {
             setActiveMenuItem('salesHistoryMenu');
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'block';
             document.getElementById('sellProductForm').style.display = 'none';

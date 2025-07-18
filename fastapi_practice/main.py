@@ -161,7 +161,7 @@ async def login_form(
     
     user = db.query(Registration).filter(Registration.Email == email).first()
     LowQuantity = db.query(Product).filter(Product.quantity < 11).all()
-
+    inventory_history = db.query(InventoryRecord).all()
     Low = len(LowQuantity)
     products = db.query(Product).all()
     SaleTransactions = db.query(SaleTransaction).all()
@@ -178,7 +178,7 @@ async def login_form(
         if user.Role:
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
-            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions})
+            return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions,"inventory_history": inventory_history})
     
     return templates.TemplateResponse("login.html", {"request": request, "error": "❌ Invalid credentials"})
 
@@ -384,3 +384,16 @@ async def get_sales_history(request: Request, db: Session = Depends(get_db)):
         return sales_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/inventory_history", response_class=HTMLResponse)
+async def inventory_history(request: Request, db: Session = Depends(get_db)):
+    
+    inventory_history = db.query(InventoryRecord).all()
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "inventory_history": inventory_history
+        }
+    )
