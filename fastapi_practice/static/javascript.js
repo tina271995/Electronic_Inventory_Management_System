@@ -1,55 +1,55 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Sales Line Chart
     new Chart(document.getElementById("lineChart"), {
-    type: 'line',
-    data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [{
-        label: 'Sales',
-        data: [120, 150, 180, 130, 170, 220, 200],
-        borderColor: 'blue',
-        backgroundColor: 'rgba(0, 0, 255, 0.1)',
-        fill: true,
-        tension: 0.4
-        }]
-    },
-    options: { plugins: { legend: { display: true } } }
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Sales',
+                data: [120, 150, 180, 130, 170, 220, 200],
+                borderColor: 'blue',
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { plugins: { legend: { display: true } } }
     });
 
     // Stock Bar Chart
     new Chart(document.getElementById("barChart"), {
-    type: 'bar',
-    data: {
-        labels: ['Laptop', 'Mouse', 'Phone', 'Tablet'],
-        datasets: [{
-        label: 'Stock Quantity',
-        data: [30, 70, 50, 40],
-        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
-        }]
-    },
-    options: {
-        aspectRatio: 2, 
-        plugins: { legend: { display: true } },
-        scales: { y: { beginAtZero: true } }
-    }
+        type: 'bar',
+        data: {
+            labels: ['Laptop', 'Mouse', 'Phone', 'Tablet'],
+            datasets: [{
+                label: 'Stock Quantity',
+                data: [30, 70, 50, 40],
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            aspectRatio: 2,
+            plugins: { legend: { display: true } },
+            scales: { y: { beginAtZero: true } }
+        }
     });
-    
+
     // Sales Pie Chart
     new Chart(document.getElementById("pieChart"), {
         type: 'pie',
         data: {
-        labels: ['Phone', 'Laptop', 'Watch'],
-        datasets: [{
-            label: 'Sales Share',
-            data: [300, 200, 100],
-            backgroundColor: ['#17a2b8', '#6f42c1', '#e83e8c']
-        }]
-    },
-    options: {
-        aspectRatio: 2, 
-        plugins: { legend: { display: true, position: 'right' } }
-    }
-});
+            labels: ['Phone', 'Laptop', 'Watch'],
+            datasets: [{
+                label: 'Sales Share',
+                data: [300, 200, 100],
+                backgroundColor: ['#17a2b8', '#6f42c1', '#e83e8c']
+            }]
+        },
+        options: {
+            aspectRatio: 2,
+            plugins: { legend: { display: true, position: 'right' } }
+        }
+    });
 });
 
 window.onload = function () {
@@ -102,10 +102,10 @@ function closeModal() {
     document.getElementById("alertModal").style.display = "none";
 }
 
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     const dropdown = document.getElementById('userDropdown');
     const avatar = document.querySelector('.user-avatar');
-    
+
     if (!avatar.contains(event.target) && !dropdown.contains(event.target)) {
         dropdown.classList.remove('active');
     }
@@ -117,16 +117,7 @@ const userData = {
     loginStatus: 'active'
 };
 function logout() {
-    showAlert("You have successfully logged out.");
-    // Update login status
-    userData.loginStatus = 'inactive';
-
-    // Log to console
-    console.group('User  Logout Details');
-    console.log('Registration ID:', userData.registrationID);
-    console.log('Login Timestamp:', userData.loginTimestamp);
-    console.log('Login Status:', userData.loginStatus);
-    console.groupEnd();
+    window.location.href = "http://127.0.0.1:8000/";
 }
 function toggleDropdown() {
     var dropdown = document.getElementById("userDropdown");
@@ -151,7 +142,7 @@ function setActiveMenuItem() {
 // Sales History CSV
 function exportSalesToCSV1() {
     const rows = document.querySelectorAll("#salesHistoryBody tr");
-    
+
     // Check if there are any rows to export
     if (rows.length === 0) {
         alert("No data available to export.");
@@ -183,7 +174,7 @@ function exportSalesToCSV1() {
 // Inventory Report CSV
 function exportSalesToCSV() {
     const rows = document.querySelectorAll("#InventorySectionBody tr");
-    
+
     let csvContent = "Product ID,Name,Quantity Sold,Restock,Time Stamp Sold,Time Stamp Restock\n"; // CSV header
 
     rows.forEach(row => {
@@ -209,7 +200,7 @@ function exportSalesToCSV() {
 // Product Report to CSV
 function exportSalesToCSV2() {
     const rows = document.querySelectorAll("#ProductSectionBody tr");
-    
+
     let csvContent = "Product ID,Name,Description,Quantity,Price (.Rs)\n"; // CSV header
 
     rows.forEach(row => {
@@ -236,14 +227,14 @@ function exportToPDF() {
     const element = document.getElementById('pdf-content');
     const excludeElements = element.querySelectorAll('.no-export');
     excludeElements.forEach(el => el.style.display = 'none');
-    
+
     const opt = {
         margin: 10,
         filename: 'sales_report.pdf',
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
     };
-    
+
     html2pdf().set(opt).from(element).save().then(() => {
         excludeElements.forEach(el => el.style.display = '');
     });
