@@ -43,7 +43,12 @@ class Product(Base):
     quantity = Column(Integer)
     inventory_record  = relationship("InventoryRecord", back_populates="product")
     sale_transaction = relationship("SaleTransaction", back_populates="product")
-
+    inventory_record = relationship(
+    "InventoryRecord", back_populates="product", cascade="all, delete"
+    )
+    sale_transaction = relationship(
+        "SaleTransaction", back_populates="product", cascade="all, delete"
+    )
     def to_dict(self):
         return{
             "id":{self.id},
@@ -56,7 +61,7 @@ class Product(Base):
 class InventoryRecord(Base):
     __tablename__ = 'inventory_record'
     id = Column(Integer,primary_key=True,index=True)
-    product_id = Column(Integer,ForeignKey("product.id"),nullable=False)
+    product_id = Column(Integer, ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
     quantity_sold = Column(Integer,nullable=True)
     restock = Column(Boolean,nullable=True)
     timestamp_sold = Column(DateTime,nullable=True,default=func.now())
@@ -76,7 +81,8 @@ class InventoryRecord(Base):
 class SaleTransaction(Base):
     __tablename__ = 'sale_transaction'
     id = Column(Integer,primary_key=True,index=True)
-    product_id = Column(Integer,ForeignKey("product.id"),nullable=False)
+    product_id = Column(Integer, ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
+
     product_amt = Column(Integer,nullable=False)
     quantity_sold = Column(Integer,nullable=False)
     timestamp_sold = Column(DateTime,nullable=False,default=func.now())

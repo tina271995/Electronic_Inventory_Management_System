@@ -16,6 +16,8 @@ from model import InventoryRecord, Registration, Login,Product, SaleTransaction
 from pydantic import BaseModel
 import setup_db
 from fastapi import Body
+from typing import Optional
+
 
 ##Calling the FastAPI creating an insance app
 app = FastAPI()
@@ -156,7 +158,8 @@ async def login_form(
     request: Request, 
     db: Session = Depends(get_db),
     email: str = Form(...), 
-    password: str = Form(...)
+    password: str = Form(...),
+    
 ):
     
     user = db.query(Registration).filter(Registration.Email == email).first()
@@ -172,8 +175,9 @@ async def login_form(
             LoginTimeStamp=datetime.datetime.now(),
             LoginStatus=True 
         )
-        db.add(login)
-        db.commit()
+        db.add(login)        
+        db.commit()  
+        
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
             return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
@@ -241,6 +245,34 @@ async def add_product(
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "products": products
+    })
+# Add product(Staff)
+
+@app.post("/products/{product_id}")
+async def add_product(
+    request: Request,
+    product_id: int,
+    user_id: int = Form(...),
+    ProductName: str = Form(...),
+    productDesc: str = Form(...),
+    quantity: int = Form(...),
+    price: int = Form(...),
+    db: Session = Depends(get_db)
+):
+    user = db.query(Product).filter(Product.id == user_id)
+    print(user_id,"UserID")    
+    print(ProductName,"ProductName")    
+    print(productDesc,"Description")    
+    print(product_id,"Product_id")    
+    print(quantity,"Queslity")    
+    print(price,"Price")    
+   
+
+    
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        
     })
 
 
@@ -386,6 +418,7 @@ async def get_sales_history(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+
 @app.get("/inventory_history", response_class=HTMLResponse)
 async def inventory_history(request: Request, db: Session = Depends(get_db)):
     
@@ -397,3 +430,15 @@ async def inventory_history(request: Request, db: Session = Depends(get_db)):
             "inventory_history": inventory_history
         }
     )
+
+@app.post("/delete-product/{product_id}", response_class=HTMLResponse)
+async def delete_product(request: Request,product_id: int, db: Session = Depends(get_db)):
+    print('fueyfuhsdjfvuhdjvivjcvjxcjvjxcbvjdjn')
+    product = db.query(Product).filter(Product.id == product_id).first()
+    print(product,'productttttttttttttttttttttttttttttttt   ')
+    if product:
+
+        db.delete(product)
+        db.commit()
+    products = db.query(Product).all()
+    return templates.TemplateResponse("dashboard.html", {"request": request, "products": products})
