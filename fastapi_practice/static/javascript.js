@@ -111,11 +111,23 @@ document.addEventListener('click', function(event) {
     }
 });
 
+const userData = {
+    registrationID: 'USER-2023-04852',
+    loginTimestamp: new Date().toISOString(),
+    loginStatus: 'active'
+};
 function logout() {
-    // Show a custom alert message instead of logging out
     showAlert("You have successfully logged out.");
-}
+    // Update login status
+    userData.loginStatus = 'inactive';
 
+    // Log to console
+    console.group('User  Logout Details');
+    console.log('Registration ID:', userData.registrationID);
+    console.log('Login Timestamp:', userData.loginTimestamp);
+    console.log('Login Status:', userData.loginStatus);
+    console.groupEnd();
+}
 function toggleDropdown() {
     var dropdown = document.getElementById("userDropdown");
     dropdown.classList.toggle("active");
@@ -237,3 +249,28 @@ function exportToPDF() {
     });
 }
 
+// function barchart():
+//     const productLabels = {{ product_labels | tojson }}; // Get product labels
+//     const salesData = {{ sales_data | tojson }}; // Get sales data
+
+//     const ctx = document.getElementById('salesBarChart').getContext('2d');
+//     const salesBarChart = new Chart(ctx, {
+//     type: 'bar', // Specify the chart type
+//     data: {
+//         labels: productLabels,
+//         datasets: [{
+//             label: 'Total Sales',
+//             data: salesData,
+//             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+//             borderColor: 'rgba(75, 192, 192, 1)',
+//             borderWidth: 1
+//         }]
+//     },
+//     options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: true
+//             }
+//         }
+//     }
+//     });

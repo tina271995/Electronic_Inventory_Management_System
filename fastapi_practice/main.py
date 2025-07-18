@@ -53,24 +53,52 @@ def healthcheck():
 @app.get("/Dashboards", response_class=HTMLResponse) 
 async def Dashboards(request: Request):
     return templates.TemplateResponse("diksha_dashboard.html", {"request": request})
+
+@app.get("/sales-history", response_class=HTMLResponse)
+async def sales_history(request: Request):
+    return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
+
+@app.get("/Dashboards", response_class=HTMLResponse)
+async def Dashboards(request: Request, db: Session = Depends(get_db)):
+    # Retrieve total products
+    total_products = db.query(func.count(Product.id)).scalar() or 0
+    print(total_products)
+    # Retrieve total quantity sold
+    total_quantity = db.query(func.sum(SaleTransaction.quantity_sold)).scalar() or 0
+    # Retrieve total stock
+    total_stock = db.query(func.sum(Product.quantity)).scalar() or 0
+    # Retrieve total sales
+    total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
+    db.close()
+    return templates.TemplateResponse("diksha_dashboard.html", 
+            {"request": request,
+            "total_products": total_products,
+            "total_quantity": total_quantity,
+            "total_stock": total_stock,
+            "total_sales": total_sales if total_sales else "0" })
+
 @app.get("/sales-history", response_class=HTMLResponse)
 async def sales_history(request: Request):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
 
 @app.get("/sales-reports", response_class=HTMLResponse)
-async def sales_reports(request: Request):
+async def get_top_product(request: Request, db: Session = Depends(get_db)):    
     db = SessionLocal()
     total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
-    total_orders = db.query(func.count(SaleTransaction.id))
-    top_product = db.query(SaleTransaction.product, func.sum(SaleTransaction.quantity_sold).label("total"))\
-    .group_by(SaleTransaction.product).order_by(func.sum(SaleTransaction.quantity_sold).desc()).first()
-    monthly_data = db.query(func.date_format(SaleTransaction.timestamp_sold, "%b").label("month"),\
-                            func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold).label("total")).group_by("month").all()
-    labels = [m[0] for m in monthly_data]
-    sales_data = [float(m[1]) for m in monthly_data]
+    total_orders = db.query(func.count(SaleTransaction.id)).scalar() or 0
+    top_product = db.query(Product.id, Product.product_name,func.sum(SaleTransaction.quantity_sold).label("total_sold"))\
+        .join(SaleTransaction, SaleTransaction.product_id == Product.id).group_by(Product.id)\
+        .order_by(func.sum(SaleTransaction.quantity_sold).desc()).first()  # Get the top product
+    sales_per_product = db.query(SaleTransaction.product,func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold).\
+        label("total_sales")).join(Product, SaleTransaction.product_id == Product.id).group_by(SaleTransaction.product).all()
+    sales_data = [float(m[1]) for m in sales_per_product]
     db.close()
-    return templates.TemplateResponse("diksha_sales_reports.html", {"request": request, "total_sales": total_sales, "total_orders": total_orders, \
-                                    "top_product":  top_product[0] if top_product else "N/A", "labels": labels, "sales_data": sales_data})
+    return templates.TemplateResponse("diksha_sales_reports.html", 
+        {"request": request, 
+         "total_sales": total_sales if total_sales else "0", 
+         "total_orders": total_orders, 
+         "top_product_name":  top_product.product_name, "labels": label, 
+         "sales_data": sales_data})
 
 @app.get("/InventoryRecords", response_class=HTMLResponse)
 async def inventory_reports(request: Request,db: Session = Depends(get_db)):
