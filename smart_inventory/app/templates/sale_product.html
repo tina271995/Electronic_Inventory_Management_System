@@ -1,12 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Restock Product{% endblock %}
+{% block title %}Sell Product{% endblock %}
 
 {% block content %}
-</head>
-<body>
 
 <div id="viewProductsSection">
-    <!-- <h2><u>Sale Products</u></h2> -->
+    <h2><u>Sale Products</u></h2>
     <table class="product-table">
         <thead>
             <tr>
@@ -20,55 +18,22 @@
             </tr>
         </thead>
         <tbody>
+            {% for product in products %}
             <tr>
-                <td>101</td>
-                <td>2025-07-13</td>
-                <td>iPhone 15</td>
-                <td>Latest Apple model</td>
-                <td>10</td>
-                <td>₹89,999</td>
+                <td>{{ product.id }}</td>
+                <td>{{ product.date }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.desc }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>₹{{ product.price }}</td>
                 <td>
-                    <button class="ok-button small-btn sell-btn" onclick="openSellForm()">Sell</button>
+                    <a href="/sale-product-form/{{ product.id }}">
+                        <button class="ok-button small-btn">Sell</button>
+                    </a>
                 </td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
-
-<!-- Sell Modal -->
-<div id="sellModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeSellModal()">&times;</span>
-        <!-- <h2>Sell Product</h2> -->
-        <form id="sellForm">
-            <input type="hidden" id="sellProductId" name="productId">
-            <label for="user">Buyer Name:</label>
-            <input type="text" id="user" name="user" required> <br> <br>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" required> <br> <br>
-            <!-- <button type="button" onclick="confirmSale()">Confirm</button> -->
-            <button type="button" class="ok-button" onclick="generateBill()">Generate Bill</button>
-        </form>
-    </div>
-</div>
-
-<!-- Sale Bill View -->
-<div id="saleBillSection">
-    <h1>Invoice</h1>
-    <br>
-    <table class="product-table">
-        <tbody>
-            <tr><th>Product ID</th><td id="billProductId"></td></tr>
-            <tr><th>Buyer Name</th><td id="userID"></td></tr>
-            <tr><th>Sale ID</th><td id="billSaleId"></td></tr>
-            <tr><th>Selling Date</th><td id="billSaleDate"></td></tr>
-            <tr><th>Name</th><td id="billProductName"></td></tr>
-            <tr><th>Description</th><td id="billDescription"></td></tr>
-            <tr><th>Quantity</th><td id="billQuantity"></td></tr>
-            <tr><th>Total Cost (₹)</th><td id="billTotalCost"></td></tr>
-        </tbody>
-    </table>
-    <button class="ok-button" onclick="downloadBillPDF()" data-html2canvas-ignore="true">Download Bill PDF</button>
-</div>
-
 {% endblock %}

@@ -111,7 +111,7 @@ body {
 
 .product-card {
     background: white;
-    border: 3px solid var(--primary-color); /* or use any color */
+    border: 3px solid var(--primary-color);
     border-radius: 16px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
     padding: 1.5rem;
@@ -159,12 +159,12 @@ body {
     border-radius: 8px;
     color: white;
     font-weight: bold;
-    background: var(--primary-color); /* Remove default button background */
-    border: var(--primary-dark); /* Remove default button border */
-    cursor: pointer; /* Change cursor to pointer */
-    font-size: 1rem; /* Adjust font size */
-    display: flex; /* Flexbox for icon alignment */
-    align-items: center; /* Center icon vertically */
+    background: var(--primary-color);
+    border: var(--primary-dark);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
     justify-content: center;
 }
 
@@ -175,7 +175,7 @@ body {
 
 .logout-btn:hover {
     color: var(--danger-color);
-    text-decoration: underline; /* Optional: underline on hover */
+    text-decoration: underline;
 }
 /* 
 .user-avatar {
@@ -477,25 +477,46 @@ body {
 
 
 /* Add Product Form Styles */
-#addProductForm {
+#addProductForm, #saleProductFormSection {
     margin-top: 20px;
 }
 
-#addProductForm div {
+#addProductForm div, #saleProductFormSection div {
     margin-bottom: 10px;
 }
 
-#addProductForm label {
+#addProductForm label, #saleProductFormSection label {
     display: block;
     margin-bottom: 5px;
 }
 
-#addProductForm input, #addProductForm textarea {
+#addProductForm input, #addProductForm textarea, #saleProductFormSection input, #saleProductFormSection textarea {
     width: 100%;
     padding: 0.5rem;
     border-radius: 6px;
     border: 1px solid #d1d5db;
 }
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+.form-actions {
+    margin-top: 20px; /* Add some space above the buttons */
+}
+
 
 /* View Products Table Styles */
 #viewProductsSection {
@@ -644,7 +665,158 @@ body {
     display: flex;
     gap: 1rem;
 } */
+/* Invoice Styles */
+.invoice-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
 
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.invoice-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.invoice-number {
+    text-align: right;
+}
+
+.invoice-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.detail-group {
+    flex: 0 0 48%;
+}
+
+.detail-group h3 {
+    margin-bottom: 15px;
+    color: var(--dark-color);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.detail-item {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.detail-label {
+    font-weight: 500;
+    width: 120px;
+    color: black;
+}
+
+.detail-value {
+    flex-grow: 1;
+    color: rgb(87, 83, 83);
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th, .items-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+}
+
+.items-table th {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px;
+    text-align: center;
+}
+
+.items-table td {
+    padding: 12px;
+    border-bottom: 1px solid black;
+    text-align: center;
+}
+
+.total-section {
+    text-align: right;
+    margin-top: 30px;
+}
+
+.total-item {
+    display: inline-flex;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.total-label {
+    width: 150px;
+    font-weight: 500;
+}
+
+.total-value {
+    width: 150px;
+    text-align: right;
+}
+
+.grand-total {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: var(--primary-color);
+}
+
+.footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+    color: var(--gray-color);
+    font-size: 14px;
+}
+
+.currency {
+    text-align: right;
+}
+
+.btn-group {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap:50px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    /* margin-right: 500px; */
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
 /* Responsive Styles */
 @media (max-width: 992px) {
     body {

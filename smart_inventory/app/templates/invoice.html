@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Invoice{% endblock %}
+
+{% block content %}
+       
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <div class="invoice-title">INVOICE</div>
+            <div class="invoice-number">
+                <div>Invoice #{{ sale.sale_id }}</div>
+                <div>{{ sale.sale_date }}</div>
+            </div>
+        </div>
+        
+        <div class="invoice-details">
+            <div class="detail-group">
+                <h3>Seller Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Company:</span>
+                    <span class="detail-value">Clover Electronics</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Address:</span>
+                    <span class="detail-value">J. B Nagar, Andheri (East), Mumbai-400059</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">GST Number:</span>
+                    <span class="detail-value">22AAAAA0000A1Z5</span>
+                </div>
+            </div>
+            
+            <div class="detail-group">
+                <h3>Buyer Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value">{{ sale.buyer_name }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ sale.name }} - {{ sale.description }}</td>
+                    <td>{{ sale.quantity }}</td>
+                    <td class="currency">{{ sale.price }}</td>
+                    <td class="currency">{{ sale.total_cost }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="total-section">
+            <div class="total-item">
+                <span class="total-label">Subtotal:</span>
+                <span class="total-value">{{ sale.total_cost }}</span>
+            </div>
+            <div class="total-item">
+                <span class="total-label">GST (18%):</span>
+                <span class="total-value">{{ sale.gst }}</span>
+            </div>
+            <div class="total-item grand-total">
+                <span class="total-label">Total:</span>
+                <span class="total-value">{{ sale.grand_total }}</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Thank you for your business!
+        </div>
+        
+        <div class="btn-group">
+            <a href="/sell-product" class="btn btn-primary">Back to Products</a>
+            <a href="/download-invoice/{{ sale.sale_id }}" class="btn btn-primary">Download Invoice as PDF</a>
+        </div>
+    </div>
+{% endblock %}

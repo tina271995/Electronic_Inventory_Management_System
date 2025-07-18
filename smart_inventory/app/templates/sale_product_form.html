@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Sale Product Form{% endblock %}
+
+{% block content %}
+<div id="saleProductFormSection">
+    <h2>Sale Product</h2>
+    <form action="/generate-invoice" method="post">
+        <div class="form-group">
+            <label for="product_id">Product ID:</label>
+            <input type="text" id="product_id" name="product_id" value="{{ product.id }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="manufacture_date">Manufacture Date:</label>
+            <input type="text" id="manufacture_date" name="manufacture_date" value="{{ product.date }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="product_name">Product Name:</label>
+            <input type="text" id="product_name" name="product_name" value="{{ product.name }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" value="{{ product.desc }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="text" id="price" name="price" value="₹{{ product.price }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+        </div>
+        <div class="form-group">
+            <label for="buyer_name">Buyer Name:</label>
+            <input type="text" id="buyer_name" name="buyer_name" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="ok-button">Generate Invoice</button>
+            <button type="button" class="ok-button" onclick="window.location.href='/sell-product'">Cancel</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
