@@ -54,8 +54,9 @@ def healthcheck():
 async def Dashboards(request: Request):
     return templates.TemplateResponse("diksha_dashboard.html", {"request": request})
 @app.get("/sales-history", response_class=HTMLResponse)
-async def sales_history(request: Request):
-    return templates.TemplateResponse("diksha_sales_history.html", {"request": request})
+async def sales_history(request: Request,db: Session = Depends(get_db)):
+    products = db.query(SaleTransaction).all()
+    return templates.TemplateResponse("diksha_sales_history.html", {"request": request,"products":products})
 
 @app.get("/sales-reports", response_class=HTMLResponse)
 async def sales_reports(request: Request):

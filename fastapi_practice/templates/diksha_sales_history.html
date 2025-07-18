@@ -101,20 +101,20 @@
                         <th>Sale ID</th>
                         <th>Sale Date</th>
                         <th>Name</th>
-                        <th>Description</th>
                         <th>Quantity</th>
                         <th>Total Cost (.Rs)</th>
                     </tr>
                 </thead>
                 <tbody id="salesHistoryBody">
-                    <tr>
-                        <td>501</td>
-                        <td>2025-07-13</td>
-                        <td>iPhone 15</td>
-                        <td>Latest Apple model</td>
-                        <td>2</td>
-                        <td>179998</td>
-                    </tr>
+                    {% for product in products %}
+                        <tr>
+                              <td>{{ product.id }}</td>
+                              <td>{{ product.timestamp_sold }}</td>
+                              <td>{{ product.product.product_name }}</td>
+                              <td>{{ product.quantity_sold }}</td>
+                              <td>{{ product.product_amt }}</td>
+                        </tr>
+                        {% endfor %}
                 </tbody>
             </table>
         </div>
