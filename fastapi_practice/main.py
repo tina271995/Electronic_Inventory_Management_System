@@ -1,10 +1,11 @@
 import datetime
 from typing import Union
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI,Request,Depends, HTTPException
 from sqlalchemy import *
+
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import SQLAlchemyError
 from database import engine, Base, SessionLocal
@@ -165,9 +166,11 @@ async def Product_reports(request: Request,db: Session = Depends(get_db)):
     return templates.TemplateResponse("diksha_Product_reports.html", {"request": request,"products": products})
 
 #Setting the Defult Root
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return  templates.TemplateResponse(request=request, name="login.html")
+
 
 #Setting the route for Registation Page
 @app.get("/register", response_class=HTMLResponse)
@@ -239,7 +242,8 @@ async def login_form(
         
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
-            return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
+            return RedirectResponse("/Dashboards",status_code=303)
+            # return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
             return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions,"inventory_history": inventory_history})
     
@@ -538,6 +542,7 @@ async def inventory_history(request: Request, db: Session = Depends(get_db)):
             "inventory_history": inventory_history
         }
     )
+
 
 @app.post("/delete-product/{product_id}", response_class=HTMLResponse)
 async def delete_product(request: Request,product_id: int, db: Session = Depends(get_db)):
