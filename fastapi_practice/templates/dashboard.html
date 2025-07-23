@@ -20,7 +20,6 @@
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-
         <div class="user-menu">
             <form action="http://127.0.0.1:8000/" method="get">
                 <button class="logout-btn" style="
@@ -42,15 +41,12 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-
-
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
             <li class="menu-item active" id="dashboardMenu">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </li>
-
             <form></form>
             <li class="menu-item" id="viewProductsMenu">
                 <i class="fas fa-boxes"></i>
@@ -78,8 +74,6 @@
                 <i class="fas fa-history"></i>
                 <span>Inventory History</span>
             </li>
-
-
         </ul>
     </aside>
 
@@ -90,7 +84,6 @@
                 <div class="header-content">
                     <h1 class="page-title">Dashboard</h1>
                 </div>
-
             </div>
 
             <!-- Dashboard Cards -->
@@ -99,15 +92,10 @@
                     <h3>Total Products</h3>
                     <p>{{ TotalProducts }}</p>
                 </div>
-                <!-- <div class="card">
-                    <h3>Today's Sales</h3>
-                    <p>₹15,000</p>
-                </div> -->
                 <div class="card">
                     <h3>Low Stock Alerts</h3>
                     <p>{{ LowInQuantity }} Items</p>
                 </div>
-
             </div>
 
             <!-- Recent Activities -->
@@ -179,7 +167,6 @@
                 <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
             </form>
         </div>
-
 
         <div id="viewProductsSection" style="display: none;">
             <h2>Sales and Restock Products</h2>
@@ -260,8 +247,6 @@
             </form>
         </div>
 
-
-
         <!-- Restock Form Section -->
         <div id="restockFormSection" style="display: none;">
             <h2 class="mx-1">Restock Product</h2>
@@ -296,7 +281,7 @@
             <form id="updateForm">
                 <div class="form-field">
                     <label for="updateProductId">Product ID:</label>
-                    <input type="text" id="updateProductId">
+                    <input type="text" id="updateProductId" readonly>
                 </div>
                 <div class="form-field">
                     <label for="updateProductName">Product Name:</label>
@@ -384,10 +369,6 @@
                     <p><strong>Price:</strong> ₹{{ product.price }}</p>
                     <div style="display: flex; gap: 13px;">
 
-                        <!-- <div style="margin-top: 10px;">
-                            <button onclick="showUpdateForm('{{ product.id }}')" type="submit"
-                                class="delete-button1">Update</button>
-                        </div> -->
                         <form action="/delete-product/{{ product.id }}" method="post" style="margin-top: 10px;">
                             <button type="submit" class="delete-button">Delete</button>
                             <button type="button" class="ok-button small-btn"
@@ -400,9 +381,6 @@
 
         </section>
 
-
-
-
         <!-- Sales History Section -->
         <div id="salesHistorySection" style="display: none;">
             <h2>Sales History</h2>
@@ -410,7 +388,6 @@
                 <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
             </div>
 
-            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
             <table class="product-table">
                 <thead>
                     <tr>
@@ -436,16 +413,11 @@
                 </tbody>
             </table>
 
-
         </div>
 
         <div id="inventoryHistorySection" style="display: none;">
             <h2>Inventory History</h2>
-            <!-- <div class="export-button">
-                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
-            </div> -->
 
-            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
             <table class="product-table">
                 <thead>
                     <tr>
@@ -458,21 +430,21 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryHistoryBody">
-                {% for inventory in inventory_history %}
+                    {% for inventory in inventory_history %}
                     {% if inventory.quantity_sold is not none %}
                     <tr>
                         <td>{{ inventory.id }}</td>
                         <td>{{ inventory.product.product_name }}</td>
                         <td>{{ inventory.quantity_sold }}</td>
                         <td>{{ inventory.restock }}</td>
-                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—" }}</td>
+                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—"
+                            }}</td>
                     </tr>
                     {% endif %}
-                {% endfor %}
-            </tbody>
+                    {% endfor %}
+                </tbody>
 
             </table>
-
 
         </div>
 
