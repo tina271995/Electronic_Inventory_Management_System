@@ -1,0 +1,75 @@
+ @media (max-width: 992px) {
+            body {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .brand-name,
+            .user-info h4,
+            .menu-item span,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar-header {
+                justify-content: center;
+                padding-bottom: 1rem;
+            }
+
+            .menu-item {
+                justify-content: center;
+            }
+        }
+
+@media (max-width: 768px) {
+            body {
+                grid-template-areas:
+                    "navbar navbar"
+                    "main main";
+                /* "footer footer"; */
+            }
+
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                z-index: 100;
+            }
+
+            .sidebar-header,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                padding: 0.5rem;
+                font-size: 0.7rem;
+                gap: 0.25rem;
+            }
+
+            .menu-item i {
+                font-size: 1rem;
+            }
+
+            .menu-item span {
+                display: block;
+                font-size: 0.7rem;
+            }
+
+            .main-content {
+                padding-bottom: 80px;
+                margin-top: 2.5rem;
+            }
+        }
