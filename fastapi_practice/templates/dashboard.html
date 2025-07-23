@@ -735,7 +735,6 @@
             <div class="brand-logo">SIM</div>
             <span class="brand-name">Smart Inventory Management</span>
         </div>
-
         <div class="user-menu">
             <form action="http://127.0.0.1:8000/" method="get">
                 <button class="logout-btn" style="
@@ -757,15 +756,12 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-
-
         <ul class="sidebar-menu">
             <div class="menu-title">Inventory</div>
             <li class="menu-item active" id="dashboardMenu">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </li>
-
             <form></form>
             <li class="menu-item" id="viewProductsMenu">
                 <i class="fas fa-boxes"></i>
@@ -793,8 +789,6 @@
                 <i class="fas fa-history"></i>
                 <span>Inventory History</span>
             </li>
-
-
         </ul>
     </aside>
 
@@ -805,7 +799,6 @@
                 <div class="header-content">
                     <h1 class="page-title">Dashboard</h1>
                 </div>
-
             </div>
 
             <!-- Dashboard Cards -->
@@ -814,15 +807,10 @@
                     <h3>Total Products</h3>
                     <p>{{ TotalProducts }}</p>
                 </div>
-                <!-- <div class="card">
-                    <h3>Today's Sales</h3>
-                    <p>₹15,000</p>
-                </div> -->
                 <div class="card">
                     <h3>Low Stock Alerts</h3>
                     <p>{{ LowInQuantity }} Items</p>
                 </div>
-
             </div>
 
             <!-- Recent Activities -->
@@ -894,7 +882,6 @@
                 <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
             </form>
         </div>
-
 
         <div id="viewProductsSection" style="display: none;">
             <h2>Sales and Restock Products</h2>
@@ -975,8 +962,6 @@
             </form>
         </div>
 
-
-
         <!-- Restock Form Section -->
         <div id="restockFormSection" style="display: none;">
             <h2 class="mx-1">Restock Product</h2>
@@ -1011,7 +996,7 @@
             <form id="updateForm">
                 <div class="form-field">
                     <label for="updateProductId">Product ID:</label>
-                    <input type="text" id="updateProductId">
+                    <input type="text" id="updateProductId" readonly>
                 </div>
                 <div class="form-field">
                     <label for="updateProductName">Product Name:</label>
@@ -1099,10 +1084,6 @@
                     <p><strong>Price:</strong> ₹{{ product.price }}</p>
                     <div style="display: flex; gap: 13px;">
 
-                        <!-- <div style="margin-top: 10px;">
-                            <button onclick="showUpdateForm('{{ product.id }}')" type="submit"
-                                class="delete-button1">Update</button>
-                        </div> -->
                         <form action="/delete-product/{{ product.id }}" method="post" style="margin-top: 10px;">
                             <button type="submit" class="delete-button">Delete</button>
                             <button type="button" class="ok-button small-btn"
@@ -1115,9 +1096,6 @@
 
         </section>
 
-
-
-
         <!-- Sales History Section -->
         <div id="salesHistorySection" style="display: none;">
             <h2>Sales History</h2>
@@ -1125,7 +1103,6 @@
                 <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
             </div>
 
-            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
             <table class="product-table">
                 <thead>
                     <tr>
@@ -1151,16 +1128,11 @@
                 </tbody>
             </table>
 
-
         </div>
 
         <div id="inventoryHistorySection" style="display: none;">
             <h2>Inventory History</h2>
-            <!-- <div class="export-button">
-                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
-            </div> -->
 
-            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
             <table class="product-table">
                 <thead>
                     <tr>
@@ -1173,21 +1145,21 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryHistoryBody">
-                {% for inventory in inventory_history %}
+                    {% for inventory in inventory_history %}
                     {% if inventory.quantity_sold is not none %}
                     <tr>
                         <td>{{ inventory.id }}</td>
                         <td>{{ inventory.product.product_name }}</td>
                         <td>{{ inventory.quantity_sold }}</td>
                         <td>{{ inventory.restock }}</td>
-                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—" }}</td>
+                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—"
+                            }}</td>
                     </tr>
                     {% endif %}
-                {% endfor %}
-            </tbody>
+                    {% endfor %}
+                </tbody>
 
             </table>
-
 
         </div>
 
@@ -1198,11 +1170,7 @@
 
     <script>
 
-
         // Close dropdown when clicking outside
-
-
-
         const userData = {
             registrationID: 'USER-2023-04852',
             loginTimestamp: new Date().toISOString(),
@@ -1232,7 +1200,6 @@
             document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
         }
 
-
         document.getElementById('addProductMenu').addEventListener('click', function () {
             setActiveMenuItem('addProductMenu');
             document.getElementById('addProductForm').style.display = 'block';
@@ -1245,8 +1212,8 @@
             document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('updateProductSection').style.display = 'none';
-            // document.getElementById('dashboard-section').style.display = 'none';
         });
+
         document.getElementById('UpdateProductForm').addEventListener('click', function () {
             setActiveMenuItem('UpdateProductForm');
             document.getElementById('addProductForm').style.display = 'none';
@@ -1257,7 +1224,6 @@
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
-            // document.getElementById('dashboard-section').style.display = 'none';
         });
 
         document.getElementById('restockProducts').addEventListener('click', function () {
@@ -1273,7 +1239,6 @@
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('updateProductSection').style.display = 'none';
-            // document.getElementById('dashboard-section').style.display = 'none';
         });
 
         document.getElementById('viewProductsMenu').addEventListener('click', function () {
@@ -1304,16 +1269,57 @@
             document.getElementById('updateProductSection').style.display = 'none';
         });
 
+        document.getElementById('dashboardMenu').addEventListener('click', function () {
+            setActiveMenuItem('dashboardMenu');
+            document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+
+        document.getElementById('inventoryHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('inventoryHistoryMenu');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+
+        document.getElementById('salesHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('salesHistoryMenu');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+
         function openSellForm(productId, name, description, price) {
             document.getElementById('sellProductId').value = productId;
             document.getElementById('UpdateProductForm').style.display = 'none';
-
             document.getElementById('sellProductName').value = name;
             document.getElementById('sellDescription').value = description;
             document.getElementById('sellPrice').value = price;
             document.getElementById('sellQuantity').value = '';
             document.getElementById('totalCost').value = '';
-
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('sellProductForm').style.display = 'block';
             document.getElementById('saleBillSection').style.display = 'none';
@@ -1333,7 +1339,6 @@
         }
 
         function generateBill() {
-
             const BuyersName = document.getElementById('BuyersName').value;
             console.log(BuyersName, "Buyers Information")
             const productId = document.getElementById('sellProductId').value;
@@ -1345,7 +1350,6 @@
             const totalCost = document.getElementById('totalCost').value;
 
             document.getElementById('billBuyersName').innerText = BuyersName;
-
             document.getElementById('billProductId').innerText = productId;
             document.getElementById('billManufactureDate').innerText = manufactureDate;
             document.getElementById('billSaleId').innerText = 'SALE' + Math.floor(Math.random() * 10000);
@@ -1354,7 +1358,6 @@
             document.getElementById('billDescription').innerText = desc;
             document.getElementById('billQuantity').innerText = quantity;
             document.getElementById('billTotalCost').innerText = totalCost;
-
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'block';
 
@@ -1391,19 +1394,15 @@
             };
 
             html2pdf().set(opt).from(element).save();
-
-
         }
 
         function openRestockForm(productId) {
             const productName = "iPhone 16";
             const productDesc = "Latest Apple model";
 
-
             document.getElementById('restockProductId').value = productId;
             document.getElementById('restockProductName').value = productName;
             document.getElementById('restockProductDesc').value = productDesc;
-
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('restockFormSection').style.display = 'block';
         }
@@ -1445,52 +1444,7 @@
         function cancelRestock() {
             document.getElementById('restockFormSection').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'block';
-
         }
-
-
-        document.getElementById('dashboardMenu').addEventListener('click', function () {
-            setActiveMenuItem('dashboardMenu');
-            document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
-            document.getElementById('product-cards-view').style.display = 'none';
-            document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
-            document.getElementById('viewProductsSection').style.display = 'none';
-            document.getElementById('salesHistorySection').style.display = 'none';
-            document.getElementById('sellProductForm').style.display = 'none';
-            document.getElementById('inventoryHistorySection').style.display = 'none';
-            document.getElementById('UpdateProductForm').style.display = 'none';
-            document.getElementById('saleBillSection').style.display = 'none';
-            document.getElementById('product-cards-view').style.display = 'none';
-            document.getElementById('updateProductSection').style.display = 'none';
-        });
-        document.getElementById('inventoryHistoryMenu').addEventListener('click', function () {
-            setActiveMenuItem('inventoryHistoryMenu');
-            document.getElementById('addProductForm').style.display = 'none';
-            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
-            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
-            document.getElementById('salesHistorySection').style.display = 'none';
-            document.getElementById('inventoryHistorySection').style.display = 'block';
-            document.getElementById('sellProductForm').style.display = 'none';
-            document.getElementById('saleBillSection').style.display = 'none';
-            document.getElementById('product-cards-view').style.display = 'none';
-            document.getElementById('UpdateProductForm').style.display = 'none';
-            document.getElementById('updateProductSection').style.display = 'none';
-            // document.getElementById('dashboard-section').style.display = 'none';
-        });
-        document.getElementById('salesHistoryMenu').addEventListener('click', function () {
-            setActiveMenuItem('salesHistoryMenu');
-            document.getElementById('dashboardContent').style.display = 'none';
-            document.getElementById('product-cards-view').style.display = 'none';
-            document.getElementById('UpdateProductForm').style.display = 'none';
-            document.getElementById('addProductForm').style.display = 'none';
-            document.getElementById('inventoryHistorySection').style.display = 'none';
-            document.getElementById('viewProductsSection').style.display = 'none';
-            document.getElementById('salesHistorySection').style.display = 'block';
-            document.getElementById('sellProductForm').style.display = 'none';
-            document.getElementById('saleBillSection').style.display = 'none';
-            document.getElementById('updateProductSection').style.display = 'none';
-        });
-
 
 
         function exportSalesToCSV() {
@@ -1512,87 +1466,15 @@
             document.body.removeChild(link);
         }
 
-
-        // function showUpdateForm(productId) {
-        //     console.log("Product to update:", productId);
-
-
-
-        //     const form = document.getElementById("productForm");
-        //     console.log(form, "Form");
-        //     form.action = `http://127.0.0.1:8000/products/${productId}`;
-
-
-
-        //     // Show the update form
-        //     document.getElementById("UpdateProductForm").style.display = "block";
-
-        //     // Optionally hide other sections if needed
-        //     const viewSection = document.getElementById("viewProductsSection");
-        //     if (viewSection) {
-        //         viewSection.style.display = "none";
-        //     }
-        // }
-
-        // Currently new code 
-        // function showUpdateForm(productId) {
-        //     const product = productsData[productId]; // Assume you exposed a productsData dictionary in your template
-        //     console.log(product, 'producttkgjkttttttttttttttttt')
-        //     document.getElementById("ProductName").value = product.product_name;
-        //     document.getElementById("productDesc").value = product.description;
-        //     document.getElementById("quantity").value = product.quantity;
-        //     document.getElementById("price").value = product.price;
-
-        //     const form = document.getElementById("productForm");
-        //     form.action = `/products/${productId}`;
-        //     document.getElementById("UpdateProductForm").style.display = "block";
-        //     const viewSection = document.getElementById("viewProductsSection");
-        //     if (viewSection) viewSection.style.display = "none";
-        // }
-
-        //     const productsData = {
-        //     {% for product in products %}
-        //     "{{ product.id }}": {
-        //         product_name: "{{ product.product_name  }}",
-        //             description: "{{ product.description }}",
-        //                 quantity: { { product.quantity } },
-        //         price: { { product.price } }
-        //     } {% if not loop.last %}, {% endif %}
-        //     {% endfor %}
-        // };
-
-
-        // function showProductUpdateForm(productId) {
-        //     // const product = productsData[productId];
-        //     // console.log(productsData, 'productdatattatatatattatat')
-        //     if (!product) {
-        //         console.error("No product found for ID:", productId);
-        //         return;
-        //     }
-
-        //     document.getElementById("updateProductId").value = productId;
-        //     document.getElementById("updateProductName").value = product.product_name;
-        //     document.getElementById("updateProductDesc").value = product.description;
-
-        //     // Default quantity to 0 or last value
-        //     document.getElementById("updateQuantity").value = product.quantity;
-        //     document.getElementById("updatePrice").value = product.price;
-
-        //     document.getElementById("updateProductSection").style.display = "block";
-        //     document.getElementById('dashboardContent').style.display = 'none';
-        // }
-
         function showProductUpdateForm(productId, productName, productDesc, productQuantity, productPrice) {
             document.getElementById('updateProductId').value = productId;
             document.getElementById('updateProductName').value = productName;
             document.getElementById('updateProductDesc').value = productDesc;
             document.getElementById('updateQuantity').value = productQuantity;
             document.getElementById('updatePrice').value = productPrice;
-
             document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('updateProductSection').style.display = 'block';
         }
-
 
         function submitProductUpdate() {
             const productId = document.getElementById("updateProductId").value;
@@ -1600,9 +1482,6 @@
             const price = document.getElementById("updatePrice").value;
             const name = document.getElementById("updateProductName").value;
             const description = document.getElementById("updateProductDesc").value;
-
-
-
             const formData = new FormData();
             formData.append("quantity", quantity);
             formData.append("price", price);
@@ -1626,11 +1505,7 @@
 
         function cancelProductUpdate() {
             document.getElementById("updateProductSection").style.display = "block";
-            // document.getElementById("dashboardContent").style.displayProductUpdate() 
-            //     document.getElementById("updateProductSection").style.display = "none";
-            //     document.getElementById("dashboardContent").style.display = "block";
-            // }
-            // `` = "block";
+
         }
 
 
@@ -1647,21 +1522,15 @@
 
             document.getElementById("confirmationMessage").innerText = `Confirm to add ${name}?`;
             document.getElementById("confirmationModal").style.display = "block";
-
             document.getElementById("confirmYesButton").onclick = function () {
-
                 document.getElementById('addProductForm').style.display = 'none';
                 document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
-
                 document.getElementById("confirmationModal").style.display = "none";
             };
-
             document.getElementById("confirmNoButton").onclick = function () {
                 document.getElementById("confirmationModal").style.display = "none";
             };
         }
-
-
 
         function cancelAddProduct() {
             document.getElementById('productName').value = '';

@@ -37,27 +37,10 @@ def get_db():
     finally:
         db.close()
 
-#For Checking the Database is connected or not
-#{
-def check_db_connection():
-    try:
-        with engine.connect() as connection:
-            connection.execute(text("SELECT 1"))
-        return {"status": "Database connected ✅"}
-    except SQLAlchemyError as e:
-        print("Error:", str(e))  # Prints to console
-        raise HTTPException(status_code=500, detail=f"DB connection failed: {str(e)}")
-    
-@app.get("/healthcheck")
-def healthcheck():
-    return check_db_connection()
-#}
-# @app.get("/GetAllInformation")
 @app.get("/Dashboards", response_class=HTMLResponse)
 async def Dashboards(request: Request, db: Session = Depends(get_db)):
     # Retrieve total products
     total_products = db.query(func.count(Product.id)).scalar() or 0
-    print(total_products)
     # Retrieve total quantity sold
     total_quantity = db.query(func.sum(SaleTransaction.quantity_sold)).scalar() or 0
     # Retrieve total stock
@@ -133,11 +116,7 @@ async def get_sales_reports(request: Request, db: Session = Depends(get_db)):
 
         daily_quantity_labels = [sale.sale_date.strftime("%Y-%m-%d") for sale in daily_sales]  # Day name
         daily_quantity_values = [int(sale.daily_quantity) for sale in daily_sales]
-        # daily_quantity = db.query(
-        #     func.strftime('%Y-%m-%d', SaleTransaction.timestamp_sold).label("date"),
-        #     func.sum(SaleTransaction.quantity_sold).label("daily_quantity")
-        # ).group_by(func.strftime('%Y-%m-%d', SaleTransaction.timestamp_sold)).all()
-        # daily_quantity_labels1 = [sale.sale_date.strftime("%Y-%m-%d") for sale in daily_quantity]
+      
 
     
         return templates.TemplateResponse("diksha_sales_reports.html",
@@ -243,7 +222,6 @@ async def login_form(
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
             return RedirectResponse("/Dashboards",status_code=303)
-            # return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
             return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions,"inventory_history": inventory_history})
     
@@ -321,38 +299,6 @@ async def add_product(
         "SaleTransactions":SaleTransactions,
         "inventory_history": inventory_history
     })
-# Add product(Staff)
-
-# @app.post("/products/{product_id}")
-# async def add_product(
-#     request: Request,
-#     product_id: int,
-#     user_id: int = Form(...),
-#     ProductName: str = Form(...),
-#     productDesc: str = Form(...),
-#     quantity: int = Form(...),
-#     price: int = Form(...),
-#     db: Session = Depends(get_db)
-# ):
-#     print("Incoming Data:")
-#     print(f"product_id: {product_id}")
-#     print(f"user_id: {user_id}")
-#     print(f"ProductName: {ProductName}")
-#     print(f"productDesc: {productDesc}")
-#     print(f"quantity: {quantity}")
-#     print(f"price: {price}")
-
-#     # ✅ You can now safely update the product here
-#     # product = db.query(Product).filter(Product.id == product_id).first()
-#     # if product:
-#     #     product.product_name = ProductName
-#     #     product.description = productDesc
-#     #     product.quantity = quantity
-#     #     product.price = price
-#     #     db.commit()
-
-#     products = db.query(Product).all()
-#     return templates.TemplateResponse("dashboard.html", {"request": request, "products": products})
 
 @app.post("/update_products/{product_id}")
 async def update_product(
@@ -376,7 +322,6 @@ async def update_product(
     product.price = price         # Overwrite price
     product.product_name = name
     product.description = description
-    print(product.price,product.quantity,product.product_name,product.description,'proddddddddddddddddddddddddddddddddddddddddd')
     db.commit()
 
     # Optionally reload product list
@@ -482,12 +427,7 @@ async def save_restock(data: RestockData, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == data.product_id).first()
     if product:
         product.quantity += data.quantity
-    # if not product:
-    #     raise HTTPException(status_code=404, detail="Product not found")
-    # if product.quantity < data.quantity_sold:
-    #     raise HTTPException(status_code=400, detail="Not enough stock")
-
-
+  
     db.commit()
     return {"message": "Restock successful", "id": restock_entry.id}
 
