@@ -1,6 +1,6 @@
 import datetime
 from typing import Union
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI,Request,Depends, HTTPException
@@ -239,7 +239,9 @@ async def login_form(
         
         # if staff logs in -> staff dashboard & if admin logs in -> admin dashboard
         if user.Role:
-            return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
+            response = RedirectResponse("/Dashboards", status_code=303)
+            return response
+            # return templates.TemplateResponse("diksha_dashboard.html", {"request": request, "username": user.Email,"products": products})
         else:
             return templates.TemplateResponse("dashboard.html", {"request": request, "username": user.Email,"products": products,"TotalProducts":TotalProducs,"LowInQuantity":Low,"SaleTransactions":SaleTransactions,"inventory_history": inventory_history})
     
