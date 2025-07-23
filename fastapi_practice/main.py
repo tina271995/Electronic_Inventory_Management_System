@@ -51,7 +51,7 @@ def check_db_connection():
 def healthcheck():
     return check_db_connection()
 #}
-
+# @app.get("/GetAllInformation")
 @app.get("/Dashboards", response_class=HTMLResponse)
 async def Dashboards(request: Request, db: Session = Depends(get_db)):
     # Retrieve total products
@@ -133,10 +133,10 @@ async def register(
 ):
     existing_user = db.query(Registration).filter(Registration.Email == email).first()
     if existing_user:
-        return templates.TemplateResponse("register.html", {"request": request, "error": "⚠️ Email already registered."})
+        return templates.TemplateResponse("dashboard.html", {"request": request, "error": "⚠️ Email already registered."})
 
     if confirm_password != password:
-        return templates.TemplateResponse("register.html", {"request": request, "error": "⚠️ Passwords do not match."})
+        return templates.TemplateResponse("dashboard.html", {"request": request, "error": "⚠️ Passwords do not match."})
 
 
     # ✅ Hash password
@@ -196,6 +196,7 @@ class ProductCreate(BaseModel):
 class ProductUpdate(BaseModel):
     name: str = None
     description: str = None
+
     price: float = None
     quantity: int = None
 
@@ -241,38 +242,86 @@ async def add_product(
     db.commit()
     db.refresh(Inventory_Record)
     products = db.query(Product).all()
-
+    product = db.query(Product).filter(Product.id == last_ele.id).first()
+    LowQuantity = db.query(Product).filter(Product.quantity < 11).all()
+    inventory_history = db.query(InventoryRecord).all()
+    Low = len(LowQuantity)
+    products = db.query(Product).all()
+    SaleTransactions = db.query(SaleTransaction).all()
+    TotalProducs = len(products)
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        "products": products
+        "products": products,
+        "username": user.Email,
+        "TotalProducts":TotalProducs,
+        "LowInQuantity":Low,
+        "SaleTransactions":SaleTransactions,
+        "inventory_history": inventory_history
     })
 # Add product(Staff)
 
-@app.post("/products/{product_id}")
-async def add_product(
+# @app.post("/products/{product_id}")
+# async def add_product(
+#     request: Request,
+#     product_id: int,
+#     user_id: int = Form(...),
+#     ProductName: str = Form(...),
+#     productDesc: str = Form(...),
+#     quantity: int = Form(...),
+#     price: int = Form(...),
+#     db: Session = Depends(get_db)
+# ):
+#     print("Incoming Data:")
+#     print(f"product_id: {product_id}")
+#     print(f"user_id: {user_id}")
+#     print(f"ProductName: {ProductName}")
+#     print(f"productDesc: {productDesc}")
+#     print(f"quantity: {quantity}")
+#     print(f"price: {price}")
+
+#     # ✅ You can now safely update the product here
+#     # product = db.query(Product).filter(Product.id == product_id).first()
+#     # if product:
+#     #     product.product_name = ProductName
+#     #     product.description = productDesc
+#     #     product.quantity = quantity
+#     #     product.price = price
+#     #     db.commit()
+
+#     products = db.query(Product).all()
+#     return templates.TemplateResponse("dashboard.html", {"request": request, "products": products})
+
+@app.post("/update_products/{product_id}")
+async def update_product(
     request: Request,
     product_id: int,
-    user_id: int = Form(...),
-    ProductName: str = Form(...),
-    productDesc: str = Form(...),
     quantity: int = Form(...),
     price: int = Form(...),
+    name: str = Form(...),
+    description: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    user = db.query(Product).filter(Product.id == user_id)
-    print(user_id,"UserID")    
-    print(ProductName,"ProductName")    
-    print(productDesc,"Description")    
-    print(product_id,"Product_id")    
-    print(quantity,"Queslity")    
-    print(price,"Price")    
-   
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        return templates.TemplateResponse("dashboard.html", {
+            "request": request,
+            "error": "Product not found."
+        })
 
-    
+    # Update only the fields that were edited
+    product.quantity = quantity  # Add to existing quantity
+    product.price = price         # Overwrite price
+    product.product_name = name
+    product.description = description
+    print(product.price,product.quantity,product.product_name,product.description,'proddddddddddddddddddddddddddddddddddddddddd')
+    db.commit()
 
+    # Optionally reload product list
+    products = db.query(Product).all()
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        
+        "products": products,
+        "message": "Product updated successfully!"
     })
 
 
@@ -289,6 +338,7 @@ async def sell_products(request: Request, db: Session = Depends(get_db)):
             "sellable_products": products
         }
     )
+
 
 
 class InvoiceData(BaseModel):
@@ -433,12 +483,13 @@ async def inventory_history(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/delete-product/{product_id}", response_class=HTMLResponse)
 async def delete_product(request: Request,product_id: int, db: Session = Depends(get_db)):
-    print('fueyfuhsdjfvuhdjvivjcvjxcjvjxcbvjdjn')
     product = db.query(Product).filter(Product.id == product_id).first()
-    print(product,'productttttttttttttttttttttttttttttttt   ')
-    if product:
-
+    inventory_history = db.query(InventoryRecord).all()
+    products = db.query(Product).all()
+    SaleTransactions = db.query(SaleTransaction).all()
+    TotalProducs = len(products)
+    if Product:
         db.delete(product)
         db.commit()
     products = db.query(Product).all()
-    return templates.TemplateResponse("dashboard.html", {"request": request, "products": products})
+    return templates.TemplateResponse("dashboard.html", {"request": request, "products": products,"request": request,"TotalProducts":TotalProducs,"SaleTransactions":SaleTransactions,"inventory_history": inventory_history})

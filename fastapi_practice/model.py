@@ -58,6 +58,7 @@ class Product(Base):
             "quantity":{self.quantity}
         }
 
+
 class InventoryRecord(Base):
     __tablename__ = 'inventory_record'
     id = Column(Integer,primary_key=True,index=True)

@@ -445,21 +445,21 @@
 
         /* Add Product Form Styles */
         #addProductForm,
-        #UpdateProductForm,
+        #updateProductSection,
         #sellProductForm,
         #restockFormSection {
             margin-top: 20px;
         }
 
         #addProductForm div,
-        #UpdateProductForm div,
+        #updateProductSection div,
         #sellProductForm div,
         #restockFormSection div {
             margin-bottom: 10px;
         }
 
         #addProductForm label,
-        #UpdateProductForm label,
+        #updateProductSection label,
         #sellProductForm label,
         #restockFormSection label {
             display: block;
@@ -467,8 +467,8 @@
         }
 
         #addProductForm input,
-        #UpdateProductForm input,
-        #UpdateProductForm textarea,
+        #updateProductSection input,
+        #updateProductSection textarea,
         #addProductForm textarea,
         #sellProductForm input,
         #sellProductForm textarea,
@@ -814,10 +814,10 @@
                     <h3>Total Products</h3>
                     <p>{{ TotalProducts }}</p>
                 </div>
-                <div class="card">
+                <!-- <div class="card">
                     <h3>Today's Sales</h3>
                     <p>₹15,000</p>
-                </div>
+                </div> -->
                 <div class="card">
                     <h3>Low Stock Alerts</h3>
                     <p>{{ LowInQuantity }} Items</p>
@@ -836,11 +836,6 @@
                     <li>Removed 1 defective unit of Realme Pad</li>
                 </ul>
             </div>
-        </div>
-
-
-        <div class="dashboard-content">
-
         </div>
 
         <!-- Add Product Form -->
@@ -871,11 +866,12 @@
             </form>
 
         </div>
+
         <!-- Hidden Update Product Form -->
         <div id="UpdateProductForm" style="display: none;">
             <h2>Update Product</h2>
-            <form id="productForm" method="post">
-                <input type="hidden" name="user_id" value="1"> <!-- Replace with actual logged-in user ID -->
+            <form id="productForm" method="post" action="/products/{product_id}">
+                <input type="hidden" name="user_id" value="1">
 
                 <div>
                     <label for="ProductName">Product Name:</label>
@@ -885,7 +881,7 @@
                     <label for="productDesc">Product Description:</label>
                     <textarea id="productDesc" name="productDesc" rows="4" cols="100" required></textarea>
                 </div>
-                <div style="display: none;">
+                <div>
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" required>
                 </div>
@@ -901,7 +897,7 @@
 
 
         <div id="viewProductsSection" style="display: none;">
-            <h2>View Products</h2>
+            <h2>Sales and Restock Products</h2>
             <table class="product-table">
                 <thead>
                     <tr>
@@ -928,6 +924,7 @@
                                 onclick="openSellForm('{{ product.id }}','{{ product.product_name }}','{{ product.description }}','{{ product.price }}')">Sell</button>
                             <button class="ok-button small-btn"
                                 onclick="openRestockForm('{{ product.id }}')">Restock</button>
+
                         </td>
                     </tr>
                     {% endfor %}
@@ -978,42 +975,7 @@
             </form>
         </div>
 
-        <div id="viewProductsSection" style="display: none;">
-            <h2>View Products</h2>
-            <table class="product-table">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Date</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Example product row -->
-                    <tr>
-                        <td>101</td>
-                        <td>2025-07-13</td>
-                        <td>iPhone 15</td>
-                        <td>Latest Apple model</td>
-                        <td>10</td>
-                        <td>₹89,999</td>
-                        <td>
-                            <!-- <button class="ok-button small-btn">Sell</button> -->
-                            <button class="ok-button small-btn"
-                                onclick="openSellForm('101','iPhone 15','Latest Apple model','89999')">Sell</button>
-                            <!-- <button class="ok-button small-btn">Restock</button> -->
-                            <button class="ok-button small-btn" onclick="openRestockForm('101')">Restock</button>
 
-                        </td>
-                    </tr>
-                    <!-- Add more rows dynamically from JS/server if needed -->
-                </tbody>
-            </table>
-        </div>
 
         <!-- Restock Form Section -->
         <div id="restockFormSection" style="display: none;">
@@ -1041,6 +1003,34 @@
                 </div>
                 <button type="button" class="ok-button" onclick="generateRestock()">Generate Restock</button>
                 <button type="button" class="ok-button" onclick="cancelRestock()">Cancel</button>
+            </form>
+        </div>
+
+        <div id="updateProductSection" style="display: none;">
+            <h2 class="form-title">Update Product</h2>
+            <form id="updateForm">
+                <div class="form-field">
+                    <label for="updateProductId">Product ID:</label>
+                    <input type="text" id="updateProductId">
+                </div>
+                <div class="form-field">
+                    <label for="updateProductName">Product Name:</label>
+                    <input type="text" id="updateProductName">
+                </div>
+                <div class="form-field">
+                    <label for="updateProductDesc">Product Description:</label>
+                    <textarea id="updateProductDesc" rows="3"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="updateQuantity">Quantity to Add:</label>
+                    <input type="number" id="updateQuantity" required>
+                </div>
+                <div class="form-field">
+                    <label for="updatePrice">New Price:</label>
+                    <input type="number" id="updatePrice" required>
+                </div>
+                <button type="button" class="ok-button" onclick="submitProductUpdate()">Save</button>
+                <button type="button" class="ok-button" onclick="cancelProductUpdate()">Cancel</button>
             </form>
         </div>
 
@@ -1094,7 +1084,6 @@
         </div>
 
 
-        <!-- view products in cards form -->
         <section id="product-cards-view" style="display: none;">
             <h2>All Products</h2>
             <div class="product-card-grid">
@@ -1110,14 +1099,14 @@
                     <p><strong>Price:</strong> ₹{{ product.price }}</p>
                     <div style="display: flex; gap: 13px;">
 
-                        <div>
-
+                        <!-- <div style="margin-top: 10px;">
                             <button onclick="showUpdateForm('{{ product.id }}')" type="submit"
                                 class="delete-button1">Update</button>
-
-                        </div>
+                        </div> -->
                         <form action="/delete-product/{{ product.id }}" method="post" style="margin-top: 10px;">
                             <button type="submit" class="delete-button">Delete</button>
+                            <button type="button" class="ok-button small-btn"
+                                onclick="showProductUpdateForm('{{ product.id }}','{{ product.product_name }}','{{ product.description }}','{{ product.quantity }}','{{ product.price }}')">Update</button>
                         </form>
                     </div>
                 </div>
@@ -1164,6 +1153,7 @@
 
 
         </div>
+
         <div id="inventoryHistorySection" style="display: none;">
             <h2>Inventory History</h2>
             <!-- <div class="export-button">
@@ -1202,48 +1192,12 @@
     </main>
 
 
-    <div id="confirmationModal" class="modal">
-        <div class="modal-content1">
-            <p id="confirmationMessage">Are you sure you want to add this product?</p>
-            <button class="ok-button1" id="confirmYesButton">Yes</button>
-            <button class="ok-button1" id="confirmNoButton">No</button>
-        </div>
-    </div>
 
-
-    <div id="alertModal" class="modal">
-        <div class="modal-content">
-            <p id="alertMessage">This is an alert message!</p>
-            <button class="ok-button" onclick="closeModal()">OK</button>
-        </div>
-    </div>
 
     <script>
 
-        function showAlert(message) {
-            document.getElementById("alertMessage").innerText = message;
-            document.getElementById("alertModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("alertModal").style.display = "none";
-        }
-
-        // Toggle user dropdown
-        function toggleDropdown() {
-            var dropdown = document.getElementById("userDropdown");
-            dropdown.classList.toggle("active");
-        }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function (event) {
-            const dropdown = document.getElementById('userDropdown');
-            const avatar = document.querySelector('.user-avatar');
-
-            if (!avatar.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
 
 
 
@@ -1287,6 +1241,8 @@
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
             // document.getElementById('dashboard-section').style.display = 'none';
         });
         document.getElementById('UpdateProductForm').addEventListener('click', function () {
@@ -1306,7 +1262,7 @@
             setActiveMenuItem('restockProducts');
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('UpdateProductForm').style.display = 'none';
-
+            document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('restockProducts').style.display = 'block';
             document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
             document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
@@ -1314,6 +1270,7 @@
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
             // document.getElementById('dashboard-section').style.display = 'none';
         });
 
@@ -1321,9 +1278,10 @@
             setActiveMenuItem('viewProductsMenu');
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('UpdateProductForm').style.display = 'none';
-
+            document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'block';
             document.getElementById('salesHistorySection').style.display = 'none';
             document.getElementById('sellProductForm').style.display = 'none';
@@ -1335,12 +1293,13 @@
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('UpdateProductForm').style.display = 'none';
-
+            document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'block';
             document.getElementById('product-cards-view').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'none';
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
         });
 
         function openSellForm(productId, name, description, price) {
@@ -1430,6 +1389,8 @@
             };
 
             html2pdf().set(opt).from(element).save();
+
+
         }
 
         function openRestockForm(productId) {
@@ -1449,7 +1410,7 @@
         function generateRestock() {
             const productId = document.getElementById('restockProductId').value;
             const quantity = document.getElementById('restockQuantity').value;
-            console.log(quantity, "Heloooooooooooooooooo")
+            console.log(quantity, "Hello")
 
             fetch('/save_restock/', {
                 method: 'POST',
@@ -1465,8 +1426,10 @@
                 .then(response => {
                     if (response.ok) {
                         alert('Restock successful!');
+
                         document.getElementById('restockFormSection').style.display = 'none';
                         document.getElementById('viewProductsSection').style.display = 'block';
+
                     } else {
                         alert('Failed to restock.');
                     }
@@ -1493,9 +1456,10 @@
             document.getElementById('salesHistorySection').style.display = 'none';
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('inventoryHistorySection').style.display = 'none';
-
+            document.getElementById('UpdateProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
         });
         document.getElementById('inventoryHistoryMenu').addEventListener('click', function () {
             setActiveMenuItem('inventoryHistoryMenu');
@@ -1507,19 +1471,24 @@
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
             // document.getElementById('dashboard-section').style.display = 'none';
         });
         document.getElementById('salesHistoryMenu').addEventListener('click', function () {
             setActiveMenuItem('salesHistoryMenu');
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
             document.getElementById('addProductForm').style.display = 'none';
             document.getElementById('inventoryHistorySection').style.display = 'none';
             document.getElementById('viewProductsSection').style.display = 'none';
             document.getElementById('salesHistorySection').style.display = 'block';
             document.getElementById('sellProductForm').style.display = 'none';
             document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
         });
+
 
 
         function exportSalesToCSV() {
@@ -1541,23 +1510,127 @@
             document.body.removeChild(link);
         }
 
-        function showUpdateForm(productId) {
-            console.log("Product to update:", productId);
 
-            // Set the form action dynamically
-            const form = document.getElementById("productForm");
-            form.action = `http://127.0.0.1:8000/products/${productId}`;
+        // function showUpdateForm(productId) {
+        //     console.log("Product to update:", productId);
 
 
-            // Show the update form
-            document.getElementById("UpdateProductForm").style.display = "block";
 
-            // Optionally hide other sections if needed
-            const viewSection = document.getElementById("viewProductsSection");
-            if (viewSection) {
-                viewSection.style.display = "none";
-            }
+        //     const form = document.getElementById("productForm");
+        //     console.log(form, "Form");
+        //     form.action = `http://127.0.0.1:8000/products/${productId}`;
+
+
+
+        //     // Show the update form
+        //     document.getElementById("UpdateProductForm").style.display = "block";
+
+        //     // Optionally hide other sections if needed
+        //     const viewSection = document.getElementById("viewProductsSection");
+        //     if (viewSection) {
+        //         viewSection.style.display = "none";
+        //     }
+        // }
+
+        // Currently new code 
+        // function showUpdateForm(productId) {
+        //     const product = productsData[productId]; // Assume you exposed a productsData dictionary in your template
+        //     console.log(product, 'producttkgjkttttttttttttttttt')
+        //     document.getElementById("ProductName").value = product.product_name;
+        //     document.getElementById("productDesc").value = product.description;
+        //     document.getElementById("quantity").value = product.quantity;
+        //     document.getElementById("price").value = product.price;
+
+        //     const form = document.getElementById("productForm");
+        //     form.action = `/products/${productId}`;
+        //     document.getElementById("UpdateProductForm").style.display = "block";
+        //     const viewSection = document.getElementById("viewProductsSection");
+        //     if (viewSection) viewSection.style.display = "none";
+        // }
+
+        //     const productsData = {
+        //     {% for product in products %}
+        //     "{{ product.id }}": {
+        //         product_name: "{{ product.product_name  }}",
+        //             description: "{{ product.description }}",
+        //                 quantity: { { product.quantity } },
+        //         price: { { product.price } }
+        //     } {% if not loop.last %}, {% endif %}
+        //     {% endfor %}
+        // };
+
+
+        // function showProductUpdateForm(productId) {
+        //     // const product = productsData[productId];
+        //     // console.log(productsData, 'productdatattatatatattatat')
+        //     if (!product) {
+        //         console.error("No product found for ID:", productId);
+        //         return;
+        //     }
+
+        //     document.getElementById("updateProductId").value = productId;
+        //     document.getElementById("updateProductName").value = product.product_name;
+        //     document.getElementById("updateProductDesc").value = product.description;
+
+        //     // Default quantity to 0 or last value
+        //     document.getElementById("updateQuantity").value = product.quantity;
+        //     document.getElementById("updatePrice").value = product.price;
+
+        //     document.getElementById("updateProductSection").style.display = "block";
+        //     document.getElementById('dashboardContent').style.display = 'none';
+        // }
+
+        function showProductUpdateForm(productId, productName, productDesc, productQuantity, productPrice) {
+            document.getElementById('updateProductId').value = productId;
+            document.getElementById('updateProductName').value = productName;
+            document.getElementById('updateProductDesc').value = productDesc;
+            document.getElementById('updateQuantity').value = productQuantity;
+            document.getElementById('updatePrice').value = productPrice;
+
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'block';
         }
+
+
+        function submitProductUpdate() {
+            const productId = document.getElementById("updateProductId").value;
+            const quantity = document.getElementById("updateQuantity").value;
+            const price = document.getElementById("updatePrice").value;
+            const name = document.getElementById("updateProductName").value;
+            const description = document.getElementById("updateProductDesc").value;
+
+
+
+            const formData = new FormData();
+            formData.append("quantity", quantity);
+            formData.append("price", price);
+            formData.append("name", name);
+            formData.append("description", description);
+
+            fetch(`/update_products/${productId}`, {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Product updated successfully!");
+                        location.reload(); // Or re-render dynamically
+                    } else {
+                        alert("Failed to update product.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function cancelProductUpdate() {
+            document.getElementById("updateProductSection").style.display = "block";
+            // document.getElementById("dashboardContent").style.displayProductUpdate() 
+            //     document.getElementById("updateProductSection").style.display = "none";
+            //     document.getElementById("dashboardContent").style.display = "block";
+            // }
+            // `` = "block";
+        }
+
 
 
         function cancelAddProduct() {
@@ -1598,6 +1671,8 @@
         }
 
     </script>
+
+
 </body>
 
 </html>
