@@ -1173,17 +1173,19 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryHistoryBody">
-                    {% for inventory in inventory_history %}
+                {% for inventory in inventory_history %}
+                    {% if inventory.quantity_sold is not none %}
                     <tr>
                         <td>{{ inventory.id }}</td>
                         <td>{{ inventory.product.product_name }}</td>
                         <td>{{ inventory.quantity_sold }}</td>
                         <td>{{ inventory.restock }}</td>
-                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—"
-                            }}</td>
+                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—" }}</td>
                     </tr>
-                    {% endfor %}
-                </tbody>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+
             </table>
 
 

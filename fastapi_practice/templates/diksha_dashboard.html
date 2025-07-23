@@ -87,7 +87,7 @@
         <div id="dashboardContent">
             <div class="page-header">
                 <div class="header-content">
-                    <h1 class="page-title">Admin Dashboard</h1>
+                    <h2 class="page-title">Admin Dashboard</h2>
                 </div>
             </div>
         </div>
@@ -117,37 +117,15 @@
             </div>
         </div>
         <!-- Charts Row -->
-        <div class="row my-4">
-            <div class="col-md-12 mb-3">
-                <div class="card h-100">
-                    <div class="card-header text-center">
-                        <h5>Sales Trend</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="lineChart" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div> <br>
         <div class="row my-5">
             <div class="chart-grid">
                 <div class="col-md-4 mb-3">
                     <div class="card h-100"> <!-- Adjust height as needed -->
                         <div class="card-header text-center">
-                            <h5>Stock per Product</h5>
+                            <h4>Top 5 Products by Stock in Warehouse</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="barChart" height="200"></canvas> <!-- Adjust height as needed -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-5"> <!-- Adjust height as needed -->
-                        <div class="card-header text-center">
-                            <h5>Sales Distribution</h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="pieChart" height="50%"></canvas> <!-- Adjust height as needed -->
+                            <canvas id="topStockChart" height="100"></canvas> <!-- Adjust height as needed -->
                         </div>
                     </div>
                 </div>
@@ -170,6 +148,71 @@
             <button class="ok-button" onclick="closeModal()">OK</button>
         </div>
     </div>
+    
+    <script>
+        window.onload = function () {
+            renderTopStockChart();
+            renderDailyQuantityChart();
+        };
+
+        function renderTopStockChart() {
+            const stockData = JSON.parse('{{ top_stock_data | tojson | safe }}');
+            const labels = stockData.map(p => p.product_name);
+            const data = stockData.map(p => p.quantity);
+
+            const ctx = document.getElementById("topStockChart").getContext("2d");
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Stock Quantity',
+                        data: data,
+                        backgroundColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                        borderColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderDailyQuantityChart() {
+        const labels = JSON.parse('{{ daily_quantity_labels | tojson | safe }}');
+        const data = JSON.parse('{{ daily_quantity_values | tojson | safe }}');
+
+        const ctx = document.getElementById("dailyQuantityChart").getContext("2d");
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Units Sold per Day',
+                    data: data,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 128, 0, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+        }
+    </script>
+
     
 
 </body>

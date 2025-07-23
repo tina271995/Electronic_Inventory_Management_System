@@ -240,28 +240,3 @@ function exportToPDF() {
     });
 }
 
-// function barchart():
-//     const productLabels = {{ product_labels | tojson }}; // Get product labels
-//     const salesData = {{ sales_data | tojson }}; // Get sales data
-
-//     const ctx = document.getElementById('salesBarChart').getContext('2d');
-//     const salesBarChart = new Chart(ctx, {
-//     type: 'bar', // Specify the chart type
-//     data: {
-//         labels: productLabels,
-//         datasets: [{
-//             label: 'Total Sales',
-//             data: salesData,
-//             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-//             borderColor: 'rgba(75, 192, 192, 1)',
-//             borderWidth: 1
-//         }]
-//     },
-//     options: {
-//         scales: {
-//             y: {
-//                 beginAtZero: true
-//             }
-//         }
-//     }
-//     });

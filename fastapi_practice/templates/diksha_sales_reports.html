@@ -90,9 +90,9 @@
                         <h2>Sales Report</h2>
                     </div>  
                 </div>
-                <div class="export-button no-export">
+                <!-- <div class="export-button no-export">
                     <button class="ok-button" onclick="exportToPDF()">Export Sales Report</button>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -122,10 +122,10 @@
                 <div class="col-md-12 mb-3">
                     <div class="card h-100">
                         <div class="card-header text-center">
-                            <h4>Sales Weekly Trend</h4>
+                            <h4>Daily Sales Trend</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="monthlyLineChart" height="100"></canvas>
+                            <canvas id="dailyQuantityChart" height="100"></canvas>
                         </div>
                     </div>
                 </div>
@@ -138,38 +138,92 @@
                             <h4>Top Selling Products</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="topProductsBarChart" height="200"></canvas>
+                            <canvas id="topProductsBarChart" height="100"></canvas>
                         </div>
                     </div>
                 </div>
         <!-- Tables Row -->
-        <div class="row my-5">
-            <div class="chart-grid">
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100 w-100"> <!-- Adjust height as needed -->
-                        <div class="card-header text-center">
-                            <h4>Low Stock Products</h4>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-sm">
-                                <thead>
-                                    <tr><th>Date</th><th>Name</th><th>Quantity</th><th>Total Cost</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>2025-07-01</td><td>Smart Watch</td><td>50</td><td>₹75,000</td></tr>
-                                    <tr><td>2025-07-02</td><td>Bluetooth Speaker</td><td>30</td><td>₹45,000</td></tr>
-                                    <tr><td>2025-07-03</td><td>Power Bank</td><td>20</td><td>₹20,000</td></tr>
-                                </tbody>
-                            </table>                        
-                        </div>
-                    </div>
-                </div>
-                    
-            </div>
-                </div>
-        </div><br>
+      
 
     </main>
+   <script>
+    window.onload = function () {
+        // Initialize charts
+        initializeTopProductsChart();
+        renderDailyQuantityChart();
+
+    };
+
+    function initializeTopProductsChart() {
+    const topProductsData = JSON.parse('{{ top_products | tojson | safe }}');
+    const name = topProductsData.map(p => p.product_name);
+    const quantity = topProductsData.map(p => p.total_quantity);
+
+    console.log("Top Products Data:", topProductsData);
+    console.log("Names:", name);
+    console.log("Quantities:", quantity);
+
+    const ctx = document.getElementById('topProductsBarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: name,
+            datasets: [{
+                label: 'Total Quantity Sold',
+                data: quantity,
+                backgroundColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                borderColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+}
+
+    function renderDailyQuantityChart() {
+    const labels = JSON.parse('{{ daily_quantity_labels | tojson | safe }}');
+    const data = JSON.parse('{{ daily_quantity_values | tojson | safe }}');
+
+    const ctx = document.getElementById("dailyQuantityChart").getContext("2d");
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Units Sold per Day',
+                data: data,
+                borderColor: 'green',
+                backgroundColor: 'rgba(0, 128, 0, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+
+
+</script>
+
+
+
 
 </body>
 </html>

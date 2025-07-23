@@ -92,9 +92,9 @@
                                     <h2>Inventory Report</h2>
                               </div>
                         </div>
-                        <div class="export-button">
+                        <!-- <div class="export-button">
                               <button class="ok-button" onclick="exportSalesToCSV()">Export Inventory Report</button>
-                        </div>
+                        </div> -->
 
                   </div>
             </div>
@@ -108,21 +108,22 @@
                               <th>Quantity Sold</th>
                               <th>Restock</th>
                               <th>Time Stamp Sold</th>
-                              <th>Time Stamp Restock</th>
                         </tr>
                   </thead>
                   <tbody id="InventorySectionBody">
-                        {% for product in products %}
+                  {% for product in products %}
+                        {% if product.quantity_sold is not none %}
                         <tr>
                               <td>{{ product.id }}</td>
-                              <td>{{ product.product_id }}</td>
+                              <td>{{ product.product.product_name }}</td>
                               <td>{{ product.quantity_sold }}</td>
                               <td>{{ product.restock }}</td>
-                              <td>{{ product.timestamp_sold }}</td>
-                              <td>{{ product.timestamp_restock }}</td>
+                              <td>{{ product.timestamp_restock.strftime('%Y-%m-%d') if product.timestamp_restock else "—" }}</td>
                         </tr>
-                        {% endfor %}
+                        {% endif %}
+                  {% endfor %}
                   </tbody>
+
 
             </table>
                   

@@ -63,13 +63,28 @@ async def Dashboards(request: Request, db: Session = Depends(get_db)):
     total_stock = db.query(func.sum(Product.quantity)).scalar() or 0
     # Retrieve total sales
     total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
+    top_stock_products = db.query(Product.product_name,Product.quantity).order_by(Product.quantity.desc()).limit(5).all()
+
+    # Convert to JSON-serializable format
+    top_stock_data = [{"product_name": p[0], "quantity": p[1]} for p in top_stock_products]
+    
+    daily_sales = db.query(func.date(SaleTransaction.timestamp_sold).label("sale_date"),
+        func.sum(SaleTransaction.quantity_sold).label("daily_quantity")
+        ).group_by(func.date(SaleTransaction.timestamp_sold)).order_by(func.date(SaleTransaction.timestamp_sold)).all()
+
+
+    daily_quantity_labels = [sale.sale_date.strftime("%Y-%m-%d") for sale in daily_sales] 
+    daily_quantity_values = [int(sale.daily_quantity) for sale in daily_sales]
     db.close()
     return templates.TemplateResponse("diksha_dashboard.html", 
             {"request": request,
             "total_products": total_products,
             "total_quantity": total_quantity,
             "total_stock": total_stock,
-            "total_sales": total_sales if total_sales else "0" })
+            "total_sales": total_sales if total_sales else "0",
+            "top_stock_data": top_stock_data,
+            "daily_quantity_labels": daily_quantity_labels,
+            "daily_quantity_values": daily_quantity_values})
 
 @app.get("/sales-history", response_class=HTMLResponse)
 async def sales_history(request: Request,db: Session = Depends(get_db)):
@@ -77,23 +92,67 @@ async def sales_history(request: Request,db: Session = Depends(get_db)):
     return templates.TemplateResponse("diksha_sales_history.html", {"request": request,"products":products})
 
 @app.get("/sales-reports", response_class=HTMLResponse)
-async def get_top_product(request: Request, db: Session = Depends(get_db)):    
-    db = SessionLocal()
-    total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
-    total_orders = db.query(func.count(SaleTransaction.id)).scalar() or 0
-    top_product = db.query(Product.id, Product.product_name,func.sum(SaleTransaction.quantity_sold).label("total_sold"))\
-        .join(SaleTransaction, SaleTransaction.product_id == Product.id).group_by(Product.id)\
-        .order_by(func.sum(SaleTransaction.quantity_sold).desc()).first()  # Get the top product
-    sales_per_product = db.query(SaleTransaction.product,func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold).\
-        label("total_sales")).join(Product, SaleTransaction.product_id == Product.id).group_by(SaleTransaction.product).all()
-    sales_data = [float(m[1]) for m in sales_per_product]
-    db.close()
-    return templates.TemplateResponse("diksha_sales_reports.html", 
-        {"request": request, 
-         "total_sales": total_sales if total_sales else "0", 
-         "total_orders": total_orders, 
-         "top_product_name":  top_product.product_name, "labels": label, 
-         "sales_data": sales_data})
+async def get_sales_reports(request: Request, db: Session = Depends(get_db)):
+    try:
+        total_sales = db.query(func.sum(SaleTransaction.product_amt * SaleTransaction.quantity_sold)).scalar() or 0
+        total_orders = db.query(func.count(SaleTransaction.id)).scalar() or 0
+        
+        top_product_result = db.query(Product.product_name)\
+            .join(SaleTransaction, SaleTransaction.product_id == Product.id)\
+            .group_by(Product.product_name)\
+            .order_by(func.sum(SaleTransaction.quantity_sold).desc())\
+            .first()
+        
+        top_product_name = top_product_result.product_name if top_product_result else "N/A"
+        
+        # Get top selling products for the bar chart (list of objects)
+        top_products_for_chart = db.query(
+            Product.product_name,
+            func.sum(SaleTransaction.quantity_sold).label("total_quantity"))\
+            .join(SaleTransaction, SaleTransaction.product_id == Product.id)\
+            .group_by(Product.product_name)\
+            .order_by(func.sum(SaleTransaction.quantity_sold).desc())\
+            .limit(5).all()
+        
+        # Convert top_products_for_chart to a list of dictionaries for JSON serialization
+        top_products_data = [
+            {"product_name": p[0], "total_quantity": float(p[1])}  # Convert Decimal to float
+            for p in top_products_for_chart
+        ]
+
+        # Last 3
+        last_3 = db.query(Product.id,Product.product_name.label('name'), Product.quantity.label('quantity'),
+            Product.price,Product.TimeStamp.label('timestamp')).order_by(Product.id.desc()).limit(3).all()        
+        
+        # Line chart
+        daily_sales = db.query(
+        func.date(SaleTransaction.timestamp_sold).label("sale_date"),
+        func.sum(SaleTransaction.quantity_sold).label("daily_quantity")
+        ).group_by(func.date(SaleTransaction.timestamp_sold)).order_by(func.date(SaleTransaction.timestamp_sold)).all()
+
+        daily_quantity_labels = [sale.sale_date.strftime("%Y-%m-%d") for sale in daily_sales]  # Day name
+        daily_quantity_values = [int(sale.daily_quantity) for sale in daily_sales]
+        # daily_quantity = db.query(
+        #     func.strftime('%Y-%m-%d', SaleTransaction.timestamp_sold).label("date"),
+        #     func.sum(SaleTransaction.quantity_sold).label("daily_quantity")
+        # ).group_by(func.strftime('%Y-%m-%d', SaleTransaction.timestamp_sold)).all()
+        # daily_quantity_labels1 = [sale.sale_date.strftime("%Y-%m-%d") for sale in daily_quantity]
+
+    
+        return templates.TemplateResponse("diksha_sales_reports.html",
+            {"request": request,
+             "total_sales": float(total_sales),  # Convert to float
+             "total_orders": total_orders,
+             "top_product_name": top_product_name,
+             "top_products": top_products_data,
+             "daily_revenue": daily_quantity_values,
+             "daily_quantity_labels": daily_quantity_labels,
+             "daily_quantity_values": daily_quantity_values,
+             "last3": last_3
+            })
+    except Exception as e:
+        print(f"Error in get_sales_reports: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while generating sales reports.")
 
 @app.get("/InventoryRecords", response_class=HTMLResponse)
 async def inventory_reports(request: Request,db: Session = Depends(get_db)):
@@ -206,7 +265,7 @@ class ProductUpdate(BaseModel):
 async def add_product(
     request: Request,
     user_id: int = Form(...),
-    ProductName: str = Form(...),
+    ProductName: str = Form(...),   
     productDesc: str = Form(...),
     quantity: int = Form(...),
     price: int = Form(...),
@@ -328,7 +387,6 @@ async def update_product(
 
 @app.get("/sell_products", response_class=HTMLResponse)
 async def sell_products(request: Request, db: Session = Depends(get_db)):
-    
     
     products = db.query(Product).filter(Product.quantity > 0).all()
     return templates.TemplateResponse(
