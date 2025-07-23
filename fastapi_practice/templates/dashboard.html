@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory - Staff Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary-color: #10b981;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --gray-color: #6b7280;
+            --danger-color: #ef4444;
+        }
+
+        .displayNoneSellProducts {
+            display: none;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* add for main section scrollable */
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            grid-template-columns: 280px 1fr;
+            grid-template-areas:
+                "navbar navbar"
+                "sidebar main";
+            /* "footer footer"; */
+            min-height: 100vh;
+            background-color: #f3f4f6;
+            overflow: hidden;
+            /* Prevent scrolling */
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            grid-area: navbar;
+            position: sticky;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-logo {
+            height: 40px;
+            width: 40px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-color);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            /* Ensure dropdown is positioned relative to this */
+        }
+
+        .user-avatar {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            /* Position it below the user avatar */
+            right: 0;
+            /* Align it to the right */
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            /* z-index: 100; Ensure it appears above other elements */
+
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 0.25rem 0;
+        }
+
+        .logout-btn {
+            color: var(--danger-color);
+        }
+
+        /*notifications section
+        .notifications {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+        } */
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            /* Could be more or less, depending on screen size */
+            max-width: 500px;
+            /* Maximum width */
+            border-radius: 8px;
+            /* Rounded corners */
+        }
+
+        .ok-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            /* display: flex;
+            flex-direction: row; */
+            align-items: center;
+            gap: 8px;
+            /* font-size: 1rem; */
+            margin-top: 20px;
+            /* Add some space above the button */
+        }
+
+        .ok-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            /* font-size: 1rem; */
+            margin-top: -20px;
+            /* Add some space above the button */
+        }
+
+        .button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            grid-area: sidebar;
+            position: sticky;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1.5rem 0;
+            top: 56px;
+            /* adjust based on your navbar height */
+            height: calc(100vh - 56px);
+            /* navbar height subtracted */
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-header .user-avatar {
+            height: 40px;
+            width: 40px;
+        }
+
+        .user-info h4 {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .user-info p {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #9ca3af;
+            padding: 1rem 1.5rem 0.5rem;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .menu-item i {
+            font-size: 1rem;
+        }
+
+        .menu-item span {
+            font-size: 0.9rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            grid-area: main;
+            overflow-y: auto;
+            padding: 2rem;
+            height: calc(100vh - 56px);
+            /* Adjust to your navbar height */
+            background-color: #f3f4f6;
+            overflow-y: auto;
+            /* Allow vertical scrolling if needed */
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            /* flex-direction: column;
+            flex-grow: 1; */
+        }
+
+        .header-actions {
+            display: flex;
+        }
+
+        .quick-add-container {
+            margin-left: auto;
+            /* Pushes the button to the right */
+        }
+
+        /* #quickAddButton {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        } */
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* dashboard */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--gray-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .activity-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--gray-color);
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .activity-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+
+        /* Add Product Form Styles */
+        #addProductForm,
+        #updateProductSection,
+        #sellProductForm,
+        #restockFormSection {
+            margin-top: 20px;
+        }
+
+        #addProductForm div,
+        #updateProductSection div,
+        #sellProductForm div,
+        #restockFormSection div {
+            margin-bottom: 10px;
+        }
+
+        #addProductForm label,
+        #updateProductSection label,
+        #sellProductForm label,
+        #restockFormSection label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #addProductForm input,
+        #updateProductSection input,
+        #updateProductSection textarea,
+        #addProductForm textarea,
+        #sellProductForm input,
+        #sellProductForm textarea,
+        #restockFormSection input,
+        #restockFormSection textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+        /* View Products Table Styles */
+        #viewProductsSection {
+            margin-top: 20px;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-table th,
+        .product-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .product-table thead {
+            background-color: #e5e7eb;
+        }
+
+        .small-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+
+        /* view product card sections */
+        .product-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+            padding-top: 1rem;
+        }
+
+        .product-card {
+            background: white;
+            border: 3px solid var(--primary-color);
+            /* or use any color */
+            border-radius: 16px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card h3 {
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        .product-card p {
+            font-size: 0.95rem;
+            color: #374151;
+            margin: 4px 0;
+        }
+
+
+        /* Confirmation Modal Styles Pop up*/
+        .modal-content1 {
+            background-color: white;
+            margin: 15% auto;
+            /* Center the modal vertically */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 23%;
+            /* Could be more or less, depending on screen size */
+            height: 23%;
+            /* Maximum width */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* Shadow for depth */
+        }
+
+        .modal-content1 p {
+            margin-bottom: 20px;
+            /* Space between message and buttons */
+            font-size: 1rem;
+            /* Font size for the message */
+            color: var(--dark-color);
+            /* Use a dark color for the text */
+        }
+
+        .ok-button1 {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 21px;
+            margin-left: 45px;
+        }
+
+        .ok-button1:hover {
+            background-color: var(--primary-dark);
+            /* Darker shade on hover */
+        }
+
+        .export-button {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            background-color: rgb(233, 59, 15);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button1 {
+            background-color: rgb(233, 226, 15);
+            color: rgb(0, 0, 0);
+            border: 3px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+
+        }
+
+        /* Footer Styles */
+        /*.footer {
+            grid-area: footer;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-link {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        } */
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            body {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .brand-name,
+            .user-info h4,
+            .menu-item span,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar-header {
+                justify-content: center;
+                padding-bottom: 1rem;
+            }
+
+            .menu-item {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                grid-template-areas:
+                    "navbar navbar"
+                    "main main";
+                /* "footer footer"; */
+            }
+
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                z-index: 100;
+            }
+
+            .sidebar-header,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                padding: 0.5rem;
+                font-size: 0.7rem;
+                gap: 0.25rem;
+            }
+
+            .menu-item i {
+                font-size: 1.25rem;
+            }
+
+            .menu-item span {
+                display: block;
+                font-size: 0.7rem;
+            }
+
+            .main-content {
+                padding-bottom: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-logo">SIM</div>
+            <span class="brand-name">Smart Inventory Management</span>
+        </div>
+
+        <div class="user-menu">
+            <form action="http://127.0.0.1:8000/" method="get">
+                <button class="logout-btn" style="
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+
+        <ul class="sidebar-menu">
+            <div class="menu-title">Inventory</div>
+            <li class="menu-item active" id="dashboardMenu">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </li>
+
+            <form></form>
+            <li class="menu-item" id="viewProductsMenu">
+                <i class="fas fa-boxes"></i>
+                <span>View Products</span>
+            </li>
+            <div class="menu-title">Upgrade</div>
+            <li class="menu-item" id="addProductMenu">
+                <i class="fas fa-plus-circle"></i>
+                <span>Add Products</span>
+            </li>
+            <li class="menu-item" style="display: none;" id="restockProducts">
+                <i class="fas fa-plus-circle"></i>
+                <span>Sell and Restock</span>
+            </li>
+            <div class="menu-title">Sales</div>
+            <li class="menu-item" id="saleProducts">
+                <i class="fas fa-cash-register"></i>
+                <span>Sell and Restock</span>
+            </li>
+            <li class="menu-item" id="salesHistoryMenu">
+                <i class="fas fa-history"></i>
+                <span>Sales History</span>
+            </li>
+            <li class="menu-item" id="inventoryHistoryMenu">
+                <i class="fas fa-history"></i>
+                <span>Inventory History</span>
+            </li>
+
+
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="dashboardContent">
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Total Products</h3>
+                    <p>{{ TotalProducts }}</p>
+                </div>
+                <!-- <div class="card">
+                    <h3>Today's Sales</h3>
+                    <p>₹15,000</p>
+                </div> -->
+                <div class="card">
+                    <h3>Low Stock Alerts</h3>
+                    <p>{{ LowInQuantity }} Items</p>
+                </div>
+
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="activity-section">
+                <h3>Recent Activities</h3>
+                <ul class="activity-list">
+                    <li>Sold 2 units of iPhone 15 on 13 July 2025</li>
+                    <li>Restocked 5 units of Samsung Galaxy S23</li>
+                    <li>Added new product: OnePlus Nord CE 4</li>
+                    <li>Updated price for iPad Pro</li>
+                    <li>Removed 1 defective unit of Realme Pad</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Add Product Form -->
+        <div id="addProductForm" style="display: none;">
+            <h2>Add Product</h2>
+            <form id="productForm" method="post" action="http://127.0.0.1:8000/products/">
+                <input type="hidden" name="user_id" value="1"> <!-- Replace with actual logged-in user ID -->
+
+                <div>
+                    <label for="ProductName">Product Name:</label>
+                    <input type="text" id="ProductName" name="ProductName" required>
+                </div>
+                <div>
+                    <label for="productDesc">Product Description:</label>
+                    <textarea id="productDesc" name="productDesc" rows="4" cols="100" required></textarea>
+                </div>
+                <div>
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+                <div>
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" name="price" required>
+                </div>
+
+                <button type="submit" class="ok-button">Save</button>
+                <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
+            </form>
+
+        </div>
+
+        <!-- Hidden Update Product Form -->
+        <div id="UpdateProductForm" style="display: none;">
+            <h2>Update Product</h2>
+            <form id="productForm" method="post" action="/products/{product_id}">
+                <input type="hidden" name="user_id" value="1">
+
+                <div>
+                    <label for="ProductName">Product Name:</label>
+                    <input type="text" id="ProductName" name="ProductName" required>
+                </div>
+                <div>
+                    <label for="productDesc">Product Description:</label>
+                    <textarea id="productDesc" name="productDesc" rows="4" cols="100" required></textarea>
+                </div>
+                <div>
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+                <div>
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" name="price" required>
+                </div>
+
+                <button type="submit" class="ok-button">Save</button>
+                <button type="button" class="ok-button" onclick="cancelAddProduct()">Cancel</button>
+            </form>
+        </div>
+
+
+        <div id="viewProductsSection" style="display: none;">
+            <h2>Sales and Restock Products</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.TimeStamp.strftime('%Y-%m-%d') if product.TimeStamp else "—" }}</td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>₹{{ "{:,}".format(product.price) }}</td>
+                        <td>
+                            <button class="ok-button small-btn"
+                                onclick="openSellForm('{{ product.id }}','{{ product.product_name }}','{{ product.description }}','{{ product.price }}')">Sell</button>
+                            <button class="ok-button small-btn"
+                                onclick="openRestockForm('{{ product.id }}')">Restock</button>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- Sell Product Form -->
+        <div id="sellProductForm" style="display: none;">
+            <h2>Sell Product</h2>
+            <form id="sellForm">
+                <div class="displayNoneSellProducts">
+                    <label>Product ID:</label>
+                    <input type="text" id="sellProductId" readonly>
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label>Manufacture Date:</label>
+                    <input type="date" id="manufactureDate">
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label>Product Name:</label>
+                    <input type="text" id="sellProductName" readonly>
+                </div class="displayNoneSellProducts">
+                <div class="displayNoneSellProducts">
+                    <label>Description:</label>
+                    <textarea id="sellDescription" rows="3" readonly></textarea>
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label>Price (₹):</label>
+                    <input type="number" id="sellPrice" readonly>
+                </div>
+                <div>
+                    <label>Buyer:</label>
+                    <input type="text" id="BuyersName">
+                </div>
+                <div>
+                    <label>Quantity:</label>
+                    <input type="number" id="sellQuantity" oninput="calculateTotal()">
+                </div>
+                <div>
+                    <label>Total Cost (₹):</label>
+                    <input type="text" id="totalCost" readonly>
+                </div>
+
+                <button type="button" class="ok-button" onclick="generateBill()">Generate Bill and Sell</button>
+                <button type="button" class="ok-button" onclick="cancelSell()">Cancel</button>
+            </form>
+        </div>
+
+
+
+        <!-- Restock Form Section -->
+        <div id="restockFormSection" style="display: none;">
+            <h2 class="mx-1">Restock Product</h2>
+            <form id="restockForm">
+                <div class="displayNoneSellProducts">
+                    <label for="restockProductId">Product ID:</label>
+                    <input type="text" id="restockProductId" readonly>
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label for="restockProductName">Product Name:</label>
+                    <input type="text" id="restockProductName" readonly>
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label for="restockProductDesc">Product Description:</label>
+                    <textarea id="restockProductDesc" rows="3" readonly></textarea>
+                </div>
+                <div class="mx-1">
+                    <label for="restockQuantity">Quantity to Add:</label>
+                    <input type="number" id="restockQuantity" required>
+                </div>
+                <div class="displayNoneSellProducts">
+                    <label for="restockPrice">New Price:</label>
+                    <input type="number" id="restockPrice" required>
+                </div>
+                <button type="button" class="ok-button" onclick="generateRestock()">Generate Restock</button>
+                <button type="button" class="ok-button" onclick="cancelRestock()">Cancel</button>
+            </form>
+        </div>
+
+        <div id="updateProductSection" style="display: none;">
+            <h2 class="form-title">Update Product</h2>
+            <form id="updateForm">
+                <div class="form-field">
+                    <label for="updateProductId">Product ID:</label>
+                    <input type="text" id="updateProductId">
+                </div>
+                <div class="form-field">
+                    <label for="updateProductName">Product Name:</label>
+                    <input type="text" id="updateProductName">
+                </div>
+                <div class="form-field">
+                    <label for="updateProductDesc">Product Description:</label>
+                    <textarea id="updateProductDesc" rows="3"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="updateQuantity">Quantity to Add:</label>
+                    <input type="number" id="updateQuantity" required>
+                </div>
+                <div class="form-field">
+                    <label for="updatePrice">New Price:</label>
+                    <input type="number" id="updatePrice" required>
+                </div>
+                <button type="button" class="ok-button" onclick="submitProductUpdate()">Save</button>
+                <button type="button" class="ok-button" onclick="cancelProductUpdate()">Cancel</button>
+            </form>
+        </div>
+
+
+        <!-- Sale Bill View -->
+        <div id="saleBillSection" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button class="ok-button" onclick="downloadBillPDF()">Download Bill PDF</button>
+            </div>
+            <h2>Invoice</h2>
+            <table class="product-table">
+                <tbody>
+                    <tr>
+                        <th>Product ID</th>
+                        <td id="billProductId"></td>
+                    </tr>
+                    <tr class="displayNoneSellProducts">
+                        <th>Manufacture Date</th>
+                        <td id="billManufactureDate"></td>
+                    </tr>
+                    <tr>
+                        <th>Sale ID</th>
+                        <td id="billSaleId"></td>
+                    </tr>
+                    <tr>
+                        <th>Buyers Information</th>
+                        <td id="billBuyersName"></td>
+                    </tr>
+                    <tr>
+                        <th>Selling Date</th>
+                        <td id="billSaleDate"></td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td id="billProductName"></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td id="billDescription"></td>
+                    </tr>
+                    <tr>
+                        <th>Quantity</th>
+                        <td id="billQuantity"></td>
+                    </tr>
+                    <tr>
+                        <th>Total Cost (₹)</th>
+                        <td id="billTotalCost"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <section id="product-cards-view" style="display: none;">
+            <h2>All Products</h2>
+            <div class="product-card-grid">
+                {% for product in products %}
+                <div class="product-card">
+
+                    <p><strong>Product ID:</strong> {{ product.id }}</p>
+                    <p><strong>Date:</strong> {{ product.TimeStamp.strftime('%Y-%m-%d') if product.TimeStamp else "—"
+                        }}</p>
+                    <p><strong>Name:</strong> {{ product.product_name }}</p>
+                    <p><strong>Description:</strong> {{ product.description }}</p>
+                    <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+                    <p><strong>Price:</strong> ₹{{ product.price }}</p>
+                    <div style="display: flex; gap: 13px;">
+
+                        <!-- <div style="margin-top: 10px;">
+                            <button onclick="showUpdateForm('{{ product.id }}')" type="submit"
+                                class="delete-button1">Update</button>
+                        </div> -->
+                        <form action="/delete-product/{{ product.id }}" method="post" style="margin-top: 10px;">
+                            <button type="submit" class="delete-button">Delete</button>
+                            <button type="button" class="ok-button small-btn"
+                                onclick="showProductUpdateForm('{{ product.id }}','{{ product.product_name }}','{{ product.description }}','{{ product.quantity }}','{{ product.price }}')">Update</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </section>
+
+
+
+
+        <!-- Sales History Section -->
+        <div id="salesHistorySection" style="display: none;">
+            <h2>Sales History</h2>
+            <div class="export-button">
+                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
+            </div>
+
+            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Sale Date</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="salesHistoryBody">
+                    {% for sale in SaleTransactions %}
+                    <tr>
+                        <td>{{ sale.id }}</td>
+                        <td>{{ sale.timestamp_sold.strftime('%Y-%m-%d') if sale.timestamp_sold else "—" }}</td>
+                        <td>{{ sale.product.product_name }}</td>
+                        <td>{{ sale.product.description }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>₹{{ "{:,}".format(sale.product_amt) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+
+        <div id="inventoryHistorySection" style="display: none;">
+            <h2>Inventory History</h2>
+            <!-- <div class="export-button">
+                <button class="ok-button" onclick="exportSalesToCSV()">Export Sales History</button>
+            </div> -->
+
+            <!-- <button class="ok-button" onclick="exportSalesToCSV()" style="margin-bottom: 10px;">Export Sales Report</button> -->
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Inventory ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Restock</th>
+                        <th>Timestamp Restock</th>
+
+                    </tr>
+                </thead>
+                <tbody id="inventoryHistoryBody">
+                {% for inventory in inventory_history %}
+                    {% if inventory.quantity_sold is not none %}
+                    <tr>
+                        <td>{{ inventory.id }}</td>
+                        <td>{{ inventory.product.product_name }}</td>
+                        <td>{{ inventory.quantity_sold }}</td>
+                        <td>{{ inventory.restock }}</td>
+                        <td>{{ inventory.timestamp_restock.strftime('%Y-%m-%d') if inventory.timestamp_restock else "—" }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+
+            </table>
+
+
+        </div>
+
+    </main>
+
+
+
+
+    <script>
+
+
+        // Close dropdown when clicking outside
+
+
+
+        const userData = {
+            registrationID: 'USER-2023-04852',
+            loginTimestamp: new Date().toISOString(),
+            loginStatus: 'active'
+        };
+        // Logout function
+        function logout() {
+            showAlert("You have successfully logged out.");
+            // Update login status
+            userData.loginStatus = 'inactive';
+
+            // Log to console
+            console.group('User  Logout Details');
+            console.log('Registration ID:', userData.registrationID);
+            console.log('Login Timestamp:', userData.loginTimestamp);
+            console.log('Login Status:', userData.loginStatus);
+            console.groupEnd();
+        }
+
+
+
+        function setActiveMenuItem(activeItemId) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active'); // Remove active class from all items
+            });
+            document.getElementById(activeItemId).classList.add('active'); // Add active class to the clicked item
+        }
+
+
+        document.getElementById('addProductMenu').addEventListener('click', function () {
+            setActiveMenuItem('addProductMenu');
+            document.getElementById('addProductForm').style.display = 'block';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
+        document.getElementById('UpdateProductForm').addEventListener('click', function () {
+            setActiveMenuItem('UpdateProductForm');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
+
+        document.getElementById('restockProducts').addEventListener('click', function () {
+            setActiveMenuItem('restockProducts');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('restockProducts').style.display = 'block';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
+
+        document.getElementById('viewProductsMenu').addEventListener('click', function () {
+            setActiveMenuItem('viewProductsMenu');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'block';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+        });
+
+        document.getElementById('saleProducts').addEventListener('click', function () {
+            setActiveMenuItem('saleProducts');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+
+        function openSellForm(productId, name, description, price) {
+            document.getElementById('sellProductId').value = productId;
+            document.getElementById('UpdateProductForm').style.display = 'none';
+
+            document.getElementById('sellProductName').value = name;
+            document.getElementById('sellDescription').value = description;
+            document.getElementById('sellPrice').value = price;
+            document.getElementById('sellQuantity').value = '';
+            document.getElementById('totalCost').value = '';
+
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'block';
+            document.getElementById('saleBillSection').style.display = 'none';
+        }
+
+        function calculateTotal() {
+            const quantity = parseInt(document.getElementById('sellQuantity').value);
+            const price = parseFloat(document.getElementById('sellPrice').value);
+            if (!isNaN(quantity) && !isNaN(price)) {
+                document.getElementById('totalCost').value = quantity * price;
+            }
+        }
+
+        function cancelSell() {
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+        }
+
+        function generateBill() {
+
+            const BuyersName = document.getElementById('BuyersName').value;
+            console.log(BuyersName, "Buyers Information")
+            const productId = document.getElementById('sellProductId').value;
+            const name = document.getElementById('sellProductName').value;
+            const desc = document.getElementById('sellDescription').value;
+            const price = document.getElementById('sellPrice').value;
+            const quantity = document.getElementById('sellQuantity').value;
+            const manufactureDate = document.getElementById('manufactureDate').value;
+            const totalCost = document.getElementById('totalCost').value;
+
+            document.getElementById('billBuyersName').innerText = BuyersName;
+
+            document.getElementById('billProductId').innerText = productId;
+            document.getElementById('billManufactureDate').innerText = manufactureDate;
+            document.getElementById('billSaleId').innerText = 'SALE' + Math.floor(Math.random() * 10000);
+            document.getElementById('billSaleDate').innerText = new Date().toISOString().split('T')[0];
+            document.getElementById('billProductName').innerText = name;
+            document.getElementById('billDescription').innerText = desc;
+            document.getElementById('billQuantity').innerText = quantity;
+            document.getElementById('billTotalCost').innerText = totalCost;
+
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'block';
+
+            const invoiceData = {
+                product_id: parseInt(document.getElementById('billProductId').innerText),
+                user: document.getElementById('billBuyersName').innerText,
+                quantity_sold: parseInt(document.getElementById('billQuantity').innerText),
+                product_amt: parseInt(document.getElementById('billTotalCost').innerText)
+            };
+            console.log(invoiceData, "invoiceData");
+
+            // Send data to FastAPI
+            fetch('/save_invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(invoiceData)
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Failed to save invoice');
+                }
+            });
+
+        }
+
+        function downloadBillPDF() {
+            const element = document.getElementById('saleBillSection');
+            const opt = {
+                margin: 1,
+                filename: 'sale_bill_' + Date.now() + '.pdf',
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+
+
+        }
+
+        function openRestockForm(productId) {
+            const productName = "iPhone 16";
+            const productDesc = "Latest Apple model";
+
+
+            document.getElementById('restockProductId').value = productId;
+            document.getElementById('restockProductName').value = productName;
+            document.getElementById('restockProductDesc').value = productDesc;
+
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('restockFormSection').style.display = 'block';
+        }
+
+
+        function generateRestock() {
+            const productId = document.getElementById('restockProductId').value;
+            const quantity = document.getElementById('restockQuantity').value;
+            console.log(quantity, "Hello")
+
+            fetch('/save_restock/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: parseInt(productId),
+                    quantity: parseInt(quantity)
+                })
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Restock successful!');
+
+                        document.getElementById('restockFormSection').style.display = 'none';
+                        document.getElementById('viewProductsSection').style.display = 'block';
+
+                    } else {
+                        alert('Failed to restock.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+        function cancelRestock() {
+            document.getElementById('restockFormSection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'block';
+
+        }
+
+
+        document.getElementById('dashboardMenu').addEventListener('click', function () {
+            setActiveMenuItem('dashboardMenu');
+            document.getElementById('addProductForm').style.display = 'none'; // Hide add product form
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+        document.getElementById('inventoryHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('inventoryHistoryMenu');
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('dashboardContent').style.display = 'none'; // Hide dashboard content
+            document.getElementById('viewProductsSection').style.display = 'none'; // HIDE view products
+            document.getElementById('salesHistorySection').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+            // document.getElementById('dashboard-section').style.display = 'none';
+        });
+        document.getElementById('salesHistoryMenu').addEventListener('click', function () {
+            setActiveMenuItem('salesHistoryMenu');
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('UpdateProductForm').style.display = 'none';
+            document.getElementById('addProductForm').style.display = 'none';
+            document.getElementById('inventoryHistorySection').style.display = 'none';
+            document.getElementById('viewProductsSection').style.display = 'none';
+            document.getElementById('salesHistorySection').style.display = 'block';
+            document.getElementById('sellProductForm').style.display = 'none';
+            document.getElementById('saleBillSection').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'none';
+        });
+
+
+
+        function exportSalesToCSV() {
+            const rows = document.querySelectorAll("#salesHistoryBody tr");
+            let csvContent = "Sale ID,Sale Date,Name,Description,Quantity,Total Cost\n";
+
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("td");
+                const rowData = Array.from(cols).map(td => td.textContent.trim()).join(",");
+                csvContent += rowData + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "sales_history_report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+
+        // function showUpdateForm(productId) {
+        //     console.log("Product to update:", productId);
+
+
+
+        //     const form = document.getElementById("productForm");
+        //     console.log(form, "Form");
+        //     form.action = `http://127.0.0.1:8000/products/${productId}`;
+
+
+
+        //     // Show the update form
+        //     document.getElementById("UpdateProductForm").style.display = "block";
+
+        //     // Optionally hide other sections if needed
+        //     const viewSection = document.getElementById("viewProductsSection");
+        //     if (viewSection) {
+        //         viewSection.style.display = "none";
+        //     }
+        // }
+
+        // Currently new code 
+        // function showUpdateForm(productId) {
+        //     const product = productsData[productId]; // Assume you exposed a productsData dictionary in your template
+        //     console.log(product, 'producttkgjkttttttttttttttttt')
+        //     document.getElementById("ProductName").value = product.product_name;
+        //     document.getElementById("productDesc").value = product.description;
+        //     document.getElementById("quantity").value = product.quantity;
+        //     document.getElementById("price").value = product.price;
+
+        //     const form = document.getElementById("productForm");
+        //     form.action = `/products/${productId}`;
+        //     document.getElementById("UpdateProductForm").style.display = "block";
+        //     const viewSection = document.getElementById("viewProductsSection");
+        //     if (viewSection) viewSection.style.display = "none";
+        // }
+
+        //     const productsData = {
+        //     {% for product in products %}
+        //     "{{ product.id }}": {
+        //         product_name: "{{ product.product_name  }}",
+        //             description: "{{ product.description }}",
+        //                 quantity: { { product.quantity } },
+        //         price: { { product.price } }
+        //     } {% if not loop.last %}, {% endif %}
+        //     {% endfor %}
+        // };
+
+
+        // function showProductUpdateForm(productId) {
+        //     // const product = productsData[productId];
+        //     // console.log(productsData, 'productdatattatatatattatat')
+        //     if (!product) {
+        //         console.error("No product found for ID:", productId);
+        //         return;
+        //     }
+
+        //     document.getElementById("updateProductId").value = productId;
+        //     document.getElementById("updateProductName").value = product.product_name;
+        //     document.getElementById("updateProductDesc").value = product.description;
+
+        //     // Default quantity to 0 or last value
+        //     document.getElementById("updateQuantity").value = product.quantity;
+        //     document.getElementById("updatePrice").value = product.price;
+
+        //     document.getElementById("updateProductSection").style.display = "block";
+        //     document.getElementById('dashboardContent').style.display = 'none';
+        // }
+
+        function showProductUpdateForm(productId, productName, productDesc, productQuantity, productPrice) {
+            document.getElementById('updateProductId').value = productId;
+            document.getElementById('updateProductName').value = productName;
+            document.getElementById('updateProductDesc').value = productDesc;
+            document.getElementById('updateQuantity').value = productQuantity;
+            document.getElementById('updatePrice').value = productPrice;
+
+            document.getElementById('product-cards-view').style.display = 'none';
+            document.getElementById('updateProductSection').style.display = 'block';
+        }
+
+
+        function submitProductUpdate() {
+            const productId = document.getElementById("updateProductId").value;
+            const quantity = document.getElementById("updateQuantity").value;
+            const price = document.getElementById("updatePrice").value;
+            const name = document.getElementById("updateProductName").value;
+            const description = document.getElementById("updateProductDesc").value;
+
+
+
+            const formData = new FormData();
+            formData.append("quantity", quantity);
+            formData.append("price", price);
+            formData.append("name", name);
+            formData.append("description", description);
+
+            fetch(`/update_products/${productId}`, {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Product updated successfully!");
+                        location.reload(); // Or re-render dynamically
+                    } else {
+                        alert("Failed to update product.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function cancelProductUpdate() {
+            document.getElementById("updateProductSection").style.display = "block";
+            // document.getElementById("dashboardContent").style.displayProductUpdate() 
+            //     document.getElementById("updateProductSection").style.display = "none";
+            //     document.getElementById("dashboardContent").style.display = "block";
+            // }
+            // `` = "block";
+        }
+
+
+
+        function cancelAddProduct() {
+            document.getElementById("UpdateProductForm").style.display = "none";
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('productName').value;
+            const desc = document.getElementById('productDesc').value;
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('price').value;
+
+            document.getElementById("confirmationMessage").innerText = `Confirm to add ${name}?`;
+            document.getElementById("confirmationModal").style.display = "block";
+
+            document.getElementById("confirmYesButton").onclick = function () {
+
+                document.getElementById('addProductForm').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block'; // Show dashboard content
+
+                document.getElementById("confirmationModal").style.display = "none";
+            };
+
+            document.getElementById("confirmNoButton").onclick = function () {
+                document.getElementById("confirmationModal").style.display = "none";
+            };
+        }
+
+
+
+        function cancelAddProduct() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productDesc').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('addProductForm').style.display = 'block';
+            document.querySelector('.dashboard-content').style.display = 'none';
+        }
+
+    </script>
+
+
+</body>
+
+</html>

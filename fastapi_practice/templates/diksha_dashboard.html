@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory - Admin Dashboard</title>
+    <!-- Add to support PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- to insert bootstrap-icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Javascript -->
+     <!-- <script src="D:\Project_Tina\Electronic_Inventory_Management_System\static\javascript.js"></script> -->
+     <script src="{{ url_for('static', path='javascript.js') }}"></script>
+
+    <!-- Styles -->
+    <!-- <link href="D:\Project_Tina\Electronic_Inventory_Management_System\static\styles.css" rel="stylesheet" > -->
+    <link rel ="stylesheet" href="{{ url_for('static', path='/Admin.css') }}">
+
+    <!-- to insert charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-logo">SIM</div>
+            <span class="brand-name">Smart Inventory Management</span>
+        </div>
+       
+        <div class="user-menu">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <div class="menu-title">Inventory</div>
+            <li class="menu-item active" id="dashboard">
+                <a href="http://127.0.0.1:8000/Dashboards">
+                    <span class="icon"><i class="fas fa-tachometer-alt"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <div class="menu-title">Sales</div>
+            <li class="menu-item" id="sales-history">
+                <a href="http://127.0.0.1:8000/sales-history">
+                    <span class="icon"><i class="fas fa-history"></i></span>
+                <span>Sales History</span>
+                </a>
+            </li>
+
+            <!-- <li class="menu-item">
+                <i class="fas fa-history"></i>
+                <span>Sales History</span>
+            </li> -->
+            
+            <div class="menu-title">Reports</div>
+            <li class="menu-item" id="sales-reports">
+                <a href="http://127.0.0.1:8000/sales-reports">
+                    <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Sales Reports</span>
+                </a>
+            </li>
+            <li class="menu-item" id="inventory-reports">
+                <a href="http://127.0.0.1:8000/InventoryRecords">
+                    <span class="icon"><i class="fas fa-archive"></i></span>
+                <span>Inventory Reports</span>
+                </a>
+            </li>
+            <li class="menu-item" id="products-reports">
+                <a href="http://127.0.0.1:8000/ProductRecords">
+                    <span class="icon"><i class="fas fa-box-open"></i></span>
+                <span>Product Reports</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="dashboardContent">
+            <div class="page-header">
+                <div class="header-content">
+                    <h2 class="page-title">Admin Dashboard</h2>
+                </div>
+            </div>
+        </div>
+        <!-- Dashboard Cards -->
+        
+        <div class="card-grid">
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Products</h3>
+                <i class="bi bi-box-seam" style="font-size: 3rem; align-items: center;"></i>
+                <p>{{ total_products }}</p>
+            </div>
+            
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Stock</h3>
+                <i class="bi bi-layers" style="font-size: 3rem; align-items: end;"></i>
+                <p>{{ total_stock }}</p>
+            </div>
+            <div class="card" style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Sales</h3>
+                <i class="bi bi-cart-check" style="font-size: 3rem; align-items: end;"></i>
+                <p>{{ total_quantity }} Items</p>
+            </div>
+            <div class="card"style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+                <h3>Total Revenue</h3>
+                <i class="bi bi-currency-rupee" style="font-size: 3rem; align-items: end;"></i>
+                <p>₹{{ total_sales }}</p>
+            </div>
+        </div>
+        <!-- Charts Row -->
+        <div class="row my-5">
+            <div class="chart-grid">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100"> <!-- Adjust height as needed -->
+                        <div class="card-header text-center">
+                            <h4>Top 5 Products by Stock in Warehouse</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topStockChart" height="100"></canvas> <!-- Adjust height as needed -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+ 
+    
+    <!-- Footer -->
+    <!-- <footer class="footer">
+        <div class="copyright">
+            &copy; 2023 Smart Inventory Management System. All rights reserved.
+        </div>
+    </footer> -->
+
+    <!-- Modal for Alert -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <p id="alertMessage">This is an alert message!</p>
+            <button class="ok-button" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    
+    <script>
+        window.onload = function () {
+            renderTopStockChart();
+            renderDailyQuantityChart();
+        };
+
+        function renderTopStockChart() {
+            const stockData = JSON.parse('{{ top_stock_data | tojson | safe }}');
+            const labels = stockData.map(p => p.product_name);
+            const data = stockData.map(p => p.quantity);
+
+            const ctx = document.getElementById("topStockChart").getContext("2d");
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Stock Quantity',
+                        data: data,
+                        backgroundColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                        borderColor: ['rgb(155, 156, 207)','rgb(235, 164, 164)', 'rgb(164, 235, 188)', 'rgb(209, 164, 235)','rgb(230, 197, 137)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderDailyQuantityChart() {
+        const labels = JSON.parse('{{ daily_quantity_labels | tojson | safe }}');
+        const data = JSON.parse('{{ daily_quantity_values | tojson | safe }}');
+
+        const ctx = document.getElementById("dailyQuantityChart").getContext("2d");
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Units Sold per Day',
+                    data: data,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 128, 0, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+        }
+    </script>
+
+    
+
+</body>
+</html>
